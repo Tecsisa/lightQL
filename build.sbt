@@ -1,13 +1,12 @@
-lazy val wrEql = project
-  .copy(id = "wr-eql")
+lazy val `wr-kql` = project
+  .copy(id = "wr-kql")
   .in(file("."))
-  .enablePlugins(AutomateHeaderPlugin, GitVersioning)
 
-name := "wr-eql"
+name := "wr-kql"
 
 libraryDependencies ++= Vector(
   Library.scalaCheck % "test"
 )
 
-initialCommands := """|import com.tecsisa.wr.eql._
+initialCommands := """|import com.tecsisa.wr.kql._
                       |""".stripMargin
