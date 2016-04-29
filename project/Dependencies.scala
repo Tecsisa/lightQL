@@ -8,4 +8,5 @@ object Version {
 
 object Library {
   val scalaCheck = "org.scalacheck" %% "scalacheck" % Version.ScalaCheck
+  val fastParse = "com.lihaoyi" %% "fastparse" % Version.FastParse
 }

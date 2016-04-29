@@ -5,6 +5,7 @@ lazy val `wr-kql` = project
 name := "wr-kql"
 
 libraryDependencies ++= Vector(
+  Library.fastParse,
   Library.scalaCheck % "test"
 )
 
