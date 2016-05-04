@@ -28,10 +28,7 @@ object Test {
        parada en el caso en que solo se especifica un tipo en la consulta.
     */
     val DtChars = NamedFunction(!"\"\\_,() ".contains(_: Char), "DtChars")
-<<<<<<< HEAD
     // ForbiddenIndexChars is negated already
-=======
->>>>>>> 48fda23a4dbfbe07eeef186155ffb290b8164714
     val ForbiddenIndexChars =
       NamedFunction(!"./\\*?\"<>| ,()".contains(_: Char), "ForbiddenIndexChars")
 
@@ -53,15 +50,9 @@ object Test {
     // https://github.com/elastic/elasticsearch/issues/6736
     val forbiddenIndexChars = P(CharsWhile(ForbiddenIndexChars))
     val indexChars = P(CharIn('a' to 'z', '0' to '9', "_-"))
-<<<<<<< HEAD
     val indexName =
       P(space ~ forbiddenIndexChars ~ indexChars.rep)
     val indexesBlock = block(indexName.!.map(x => IndexName(x.trim)))
-=======
-    val indexName: Parser[IndexName] =
-      P(space ~ forbiddenIndexChars ~ indexChars.rep.!).map(IndexName)
-    val indexesBlock = parenBlock(indexName)
->>>>>>> 48fda23a4dbfbe07eeef186155ffb290b8164714
     val search = P(IgnoreCase("search"))
     val `with` = P(IgnoreCase("with"))
     val query = P(IgnoreCase("query"))
@@ -70,7 +61,6 @@ object Test {
     val fieldP = P(indexChars.rep())
     val operatorP = P("=" | "<=" | ">=" | "<>" | ">" | "<")
 
-<<<<<<< HEAD
     // Here we parse all characters other than double quotes
     val valueP = P(integral | quotedP(CharPred(_ != '"').rep))
     val queryClause = P(space ~ fieldP.! ~ space ~ operatorP.! ~ space ~ valueP.!).map(
@@ -87,26 +77,6 @@ object Test {
 
     val expr = P(space ~ searchSection ~ space ~ indexSection ~ limitSection.?
       ~ querySection ~ space ~ End).map {
-=======
-    // remember to call the ! method when you want that a parser you want to
-    // adapt to quotes to capture the parser input
-    val fieldP = quotedP(P(indexChars.rep().!))
-    val operatorP = P(("==" | "<=" | ">=" | "!=" | ">" | "<"))
-    val valueP = P(integral | quotedP(indexChars.rep()))
-    val queryClause = P(space ~ fieldP ~ space ~ operatorP.! ~ space ~ valueP.!).map(
-      x => Clause(Field(x._1), Operator(x._2), Value(x._3))
-    )
-    val queryBlock = P(space ~ "(" ~ queryClause ~ ")")
-
-    val searchSection = (search ~ dtBlock)
-    val indexSection = (in ~ indexesBlock)
-    val querySection = (space ~ `with` ~ space ~ query ~ queryBlock)
-    val limitSection = P(space ~ `with` ~ space ~ limit ~ space
-      ~ integral.!).map(_.toInt).map(Limit)
-
-    val expr = P(space ~ searchSection ~ space ~ indexSection ~ space
-      ~ limitSection.? ~ querySection ~ space ~ End).map {
->>>>>>> 48fda23a4dbfbe07eeef186155ffb290b8164714
       case (searchSection, indexSection, limitSection, querySection) =>
         Search(searchSection, indexSection, limitSection, querySection)
     }
@@ -120,7 +90,6 @@ object Test {
   def main(args: Array[String]): Unit = {
     import Parser._
 
-<<<<<<< HEAD
     // Next three use cases must success
     val target1 = "search type1 in (index3,index5) with limit 100 with query (campo1 <> 24534, campo2 <> 1)"
     val target2 = "search (type1, type2) in ( index1,            index2) with query (campo1 > \"sonciclossanos\")"
@@ -133,19 +102,6 @@ object Test {
     val target6 = "search (type1, type2) in (.index1, index2) with query (field = \"randomStr\")"
 
     val testList = List(target1, target2, target3, target4, target5, target6)
-=======
-    // Next two use cases must success
-    val target1 = "search type1 in (index3, index5) with limit 100 with query ( \"campo1\" == 2)"
-    val target2 = "search (type1, type2) in (index1, index2) with query ( \"campo1\" == \"sonciclossanos\")"
-    // This must fail because the last parenthesis is missing
-    val target3 = "search (type1, type2) in (index1, index2) with query ( \"campo1\" == \"sonciclossanos\""
-    // This must fail because the index section is missing
-    val target4 = "search (type1, type2, type3) with limit 10"
-    // This must fail because has a dot in the beginning of a index name
-    val target5 = "search (type1, type2) in (.index1, index2) with query (\"field\" == \"randomStr\")"
-
-    val testList = List(target1, target2, target3, target4, target5)
->>>>>>> 48fda23a4dbfbe07eeef186155ffb290b8164714
     testList.map(x => println(expr.parse(x)))
   }
 }

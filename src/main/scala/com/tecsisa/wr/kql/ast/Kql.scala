@@ -19,10 +19,6 @@ object Kql {
     types: Seq[DocumentType],
     indexes: Seq[IndexName],
     limit: Option[Limit] = None,
-<<<<<<< HEAD
     query: Seq[Clause]
-=======
-    query: Clause // será una Seq[Clause] cuando el lenguaje vaya creciendo
->>>>>>> 48fda23a4dbfbe07eeef186155ffb290b8164714
   ) extends Kql
 }
