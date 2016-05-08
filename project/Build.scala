@@ -1,12 +1,12 @@
-import com.typesafe.sbt.{ GitPlugin, SbtScalariform }
+import com.typesafe.sbt.GitPlugin
+import org.scalafmt.sbt.ScalaFmtPlugin
+import sbt.Keys._
 import sbt._
 import sbt.plugins.JvmPlugin
-import sbt.Keys._
-import scalariform.formatter.preferences.{ AlignSingleLineCaseStatements, DoubleIndentClassDeclaration }
 
 object Build extends AutoPlugin {
 
-  override def requires = JvmPlugin && GitPlugin && SbtScalariform
+  override def requires = JvmPlugin && GitPlugin
 
   override def trigger = allRequirements
 
@@ -26,11 +26,8 @@ object Build extends AutoPlugin {
     unmanagedSourceDirectories.in(Compile) := Vector(scalaSource.in(Compile).value),
     unmanagedSourceDirectories.in(Test) := Vector(scalaSource.in(Test).value),
 
-    // Scalariform settings
-    SbtScalariform.autoImport.scalariformPreferences := SbtScalariform.autoImport.scalariformPreferences.value
-      .setPreference(AlignSingleLineCaseStatements, true)
-      .setPreference(AlignSingleLineCaseStatements.MaxArrowIndent, 100)
-      .setPreference(DoubleIndentClassDeclaration, true),
+    // Scalafmt settings
+    ScalaFmtPlugin.autoImport.scalafmtConfig := Some(file(".scalafmt")),
 
     // Git settings
     GitPlugin.autoImport.git.useGitDescribe := true

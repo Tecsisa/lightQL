@@ -1,0 +1,3 @@
+# scalafmt configuration.
+--style defaultWithAlign
+--maxColumn 90
