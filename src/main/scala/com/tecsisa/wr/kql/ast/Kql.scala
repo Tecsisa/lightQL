@@ -2,7 +2,11 @@ package com.tecsisa.wr
 package kql
 package ast
 
+import com.tecsisa.wr.kql.mat.Materializer
+import scala.language.implicitConversions
+
 trait Kql
+
 object Kql {
   case class DocumentType(name: String) extends Kql
   case class IndexName(name: String)    extends Kql
@@ -20,4 +24,11 @@ object Kql {
                     limit: Option[Limit] = None,
                     query: Seq[Clause])
       extends Kql
+
+  implicit def kqlOps(underlying: Kql): KqlOps = new KqlOps(underlying)
+}
+
+class KqlOps(underlying: Kql) {
+  def execute()(implicit materializer: Materializer[Kql]): materializer.R =
+    materializer.execute(underlying)
 }

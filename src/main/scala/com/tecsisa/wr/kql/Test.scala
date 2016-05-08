@@ -10,6 +10,7 @@ object Test {
 
   def main(args: Array[String]): Unit = {
     import parser.KqlParser._
+    import mat.instances._
 
     // Next three use cases must success
     val target1 =
@@ -28,6 +29,11 @@ object Test {
       "search (type1, type2) in (.index1, index2) with query (field = \"randomStr\")"
 
     val testList = List(target1, target2, target3, target4, target5, target6)
-    testList.foreach(x => println(expr.parse(x)))
+    testList.foreach { x =>
+      val parsed = expr.parse(x)
+      println(parsed)
+      val search = parsed.get.value
+      search.execute()
+    }
   }
 }
