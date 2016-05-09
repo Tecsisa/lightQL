@@ -3,6 +3,7 @@ package kql
 package mat
 
 import com.tecsisa.wr.kql.ast.Kql
+import com.tecsisa.wr.kql.repo.DummyQuery
 
 package object instances extends MaterializerInstances
 
@@ -11,9 +12,6 @@ trait MaterializerInstances {
 }
 
 class DummyMaterializer extends Materializer[Kql] {
-  type R = Unit
-  def execute(kql: Kql): Unit = {
-    // Nothing to do
-    println("executing...")
-  }
+  type Q = DummyQuery
+  def asQuery(kql: Kql): DummyQuery = ???
 }
