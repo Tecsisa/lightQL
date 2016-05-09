@@ -29,6 +29,6 @@ object Kql {
 }
 
 class KqlOps(underlying: Kql) {
-  def execute()(implicit materializer: Materializer[Kql]): materializer.R =
-    materializer.execute(underlying)
+  def asQuery(implicit materializer: Materializer[Kql]): materializer.Q =
+    materializer.asQuery(underlying)
 }

@@ -3,6 +3,6 @@ package kql
 package mat
 
 trait Materializer[A] {
-  type R
-  def execute(kql: A): R
+  type Q
+  def asQuery(kql: A): Q
 }
