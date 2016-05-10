@@ -29,6 +29,13 @@ object Kql {
 }
 
 class KqlOps(underlying: Kql) {
-  def asQuery(implicit materializer: Materializer[Kql]): materializer.Q =
+  // using asQuery
+  /** *
+    * val search: Kql = parsed.get.value
+      implicit val client = TransportClient.builder().build()
+      search.asQuery.search() //opcional: (client)
+    */
+  /
+  def asQuery[Q](implicit materializer: Materializer[Q]): Q =
     materializer.asQuery(underlying)
 }

@@ -3,15 +3,14 @@ package kql
 package mat
 
 import com.tecsisa.wr.kql.ast.Kql
-import com.tecsisa.wr.kql.repo.DummyQuery
+import org.elasticsearch.action.search.SearchRequest
 
 package object instances extends MaterializerInstances
 
 trait MaterializerInstances {
-  implicit def dummyMaterializer: DummyMaterializer = new DummyMaterializer
+  implicit def esMaterializer: ESMaterializer = new ESMaterializer
 }
 
-class DummyMaterializer extends Materializer[Kql] {
-  type Q = DummyQuery
-  def asQuery(kql: Kql): DummyQuery = ???
+class ESMaterializer extends Materializer[SearchRequest] {
+  def asQuery(kql: Kql): SearchRequest = ???
 }
