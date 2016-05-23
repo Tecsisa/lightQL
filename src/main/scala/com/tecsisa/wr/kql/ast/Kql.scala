@@ -22,7 +22,7 @@ object Kql {
   case class Search(types: Seq[DocumentType],
                     indexes: Seq[IndexName],
                     limit: Option[Limit] = None,
-                    query: Seq[Clause])
+                    query: Option[Seq[Clause]] = None)
       extends Kql
 
   implicit def kqlOps(underlying: Kql): KqlOps = new KqlOps(underlying)

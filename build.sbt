@@ -7,6 +7,7 @@ name := "wr-kql"
 libraryDependencies ++= Vector(
   Library.fastParse,
   Library.elastic,
+  Library.scalaTest % "test",
   Library.scalaCheck % "test"
 )
 

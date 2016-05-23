@@ -1,4 +1,5 @@
-package com.tecsisa.wr.kql
+package com.tecsisa.wr
+package kql
 package parser
 
 import fastparse.all._
@@ -62,7 +63,7 @@ trait KqlParser extends BasicParsers {
     P(space ~ searchSection ~ space ~
               indexSection          ~
               limitSection.?        ~
-              querySection          ~ space ~ End).map {
+              querySection.?        ~ space ~ End).map {
       case (s, i, l, q) => Search(types = s, indexes = i, limit = l, query = q)
     }
     // format: on
