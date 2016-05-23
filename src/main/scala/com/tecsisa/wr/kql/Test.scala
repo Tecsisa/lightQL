@@ -10,7 +10,7 @@ object Test {
 
   def main(args: Array[String]): Unit = {
     import parser.KqlParser._
-    import mat.instances._
+//    import mat.instances._
 
     // Next three use cases must success
     val target1 =
@@ -32,8 +32,8 @@ object Test {
     testList.foreach { x =>
       val parsed = expr.parse(x)
       println(parsed)
-      val search = parsed.get.value
-      search.execute()
+//      val search = parsed.get.value
+//      search.execute()
     }
   }
 }
