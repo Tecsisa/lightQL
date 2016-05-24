@@ -8,5 +8,6 @@ import org.scalatest.{Matchers, WordSpec}
 trait BaseTest extends WordSpec with Matchers  {
 
   type Success = fastparse.core.Parsed.Success[Search]
+  type Failure = fastparse.core.Parsed.Failure
 
 }

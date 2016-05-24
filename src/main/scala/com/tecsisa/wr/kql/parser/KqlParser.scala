@@ -30,7 +30,7 @@ trait KqlParser extends BasicParsers {
 
   /** Document Types section parsers */
   val dtChars = P(CharsWhile(DtChars))
-  val dtName  = P(space ~ dtChars.!).map(DocumentType)
+  val dtName  = P(space ~ !`in` ~ dtChars.!).map(DocumentType)
   val dtBlock = block(dtName)
 
   /** Indexes section parsers */
