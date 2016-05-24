@@ -17,5 +17,11 @@ class KqlParserSpec extends BaseTest {
       parsed.get.value shouldBe Search(Vector(DocumentType(dt)),
                                        Vector(IndexName(index)))
     }
+    "not parse and fail when the document type is not set" in {
+      val index = "index1"
+      val e = s"search in $index"
+      val parsed = expr.parse(e)
+      parsed shouldBe a[Failure]
+    }
   }
 }
