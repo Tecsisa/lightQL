@@ -1,2 +1,2 @@
 addSbtPlugin("com.typesafe.sbt"  %  "sbt-git"         % "0.8.5")
-addSbtPlugin("com.geirsson"      %% "sbt-scalafmt"    % "0.2.3")
+addSbtPlugin("com.geirsson"      %% "sbt-scalafmt"    % "0.2.5")
