@@ -5,28 +5,27 @@ package ast
 import com.tecsisa.wr.kql.mat.Materializer
 import scala.language.implicitConversions
 
-trait Kql
-
+sealed trait Kql extends Product with Serializable
 object Kql {
-  case class DocumentType(name: String) extends Kql
-  case class IndexName(name: String)    extends Kql
-  case class Limit(size: Int)           extends Kql
-
-  // Query part
-  case class Field(name: String)                                  extends Kql
-  case class Operator(name: String)                               extends Kql
-  case class Value(name: String)                                  extends Kql
-  case class Clause(fieldName: Field, op: Operator, value: Value) extends Kql
-  // end of Query Part
-
-  case class Search(types: Seq[DocumentType],
-                    indexes: Seq[IndexName],
-                    limit: Option[Limit] = None,
-                    query: Option[Seq[Clause]] = None)
-      extends Kql
-
   implicit def kqlOps(underlying: Kql): KqlOps = new KqlOps(underlying)
 }
+
+final case class DocumentType(name: String) extends Kql
+final case class IndexName(name: String)    extends Kql
+final case class Limit(size: Int)           extends Kql
+
+sealed trait ClauseTree extends Kql
+object ClauseTree {
+  type Field = String
+  case class Clause[V](field: Field, op: BinaryOperator, value: V)               extends ClauseTree
+  case class CombinedClause(lct: ClauseTree, op: LogicOperator, rct: ClauseTree) extends ClauseTree
+}
+
+final case class Search(types: Seq[DocumentType],
+                        indexes: Seq[IndexName],
+                        limit: Option[Limit] = None,
+                        query: Option[ClauseTree] = None)
+    extends Kql
 
 class KqlOps(underlying: Kql) {
   // using asQuery

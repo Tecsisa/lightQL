@@ -10,7 +10,7 @@ import scala.language.implicitConversions
 package object instances extends RepoInstances
 
 trait RepoInstances {
-  implicit def esRepo: Repo[Client, SearchRequest]    = new ESRepo
+  implicit def esRepo: Repo[Client, SearchRequest] = new ESRepo
 
   // ops for `SearchRequest`
   implicit def searchRequestOps(underlying: SearchRequest)(
