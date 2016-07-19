@@ -3,7 +3,7 @@ package kql
 package repo
 
 import org.elasticsearch.action.ActionFuture
-import org.elasticsearch.action.search.{SearchRequest, SearchResponse}
+import org.elasticsearch.action.search.{ SearchRequest, SearchResponse }
 import org.elasticsearch.client.Client
 import scala.language.implicitConversions
 

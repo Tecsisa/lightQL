@@ -3,11 +3,11 @@ package kql
 package parser
 
 import com.tecsisa.wr.kql.ast.ClauseTree
-import com.tecsisa.wr.kql.ast.ClauseTree.{Clause, CombinedClause}
+import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.wr.kql.ast.LogicOperator
 import com.tecsisa.wr.kql.ast.Operator.Associativity
 import fastparse.all._
-import fastparse.core.{Mutable, ParseCtx, Parser}
+import fastparse.core.{ Mutable, ParseCtx, Parser }
 import scala.annotation.tailrec
 
 case object ClauseTreeParse extends Parser[ClauseTree] with Operators with BasicParsers {

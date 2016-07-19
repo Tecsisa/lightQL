@@ -2,7 +2,7 @@ package com.tecsisa.wr
 package kql
 package parser
 
-import com.tecsisa.wr.kql.ast.{DocumentType, IndexName, Limit, Search}
+import com.tecsisa.wr.kql.ast.{ DocumentType, IndexName, Limit, Search }
 import fastparse.all._
 
 object KqlParser extends KqlParser

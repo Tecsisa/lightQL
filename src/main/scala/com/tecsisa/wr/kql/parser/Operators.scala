@@ -2,9 +2,9 @@ package com.tecsisa.wr
 package kql
 package parser
 
-import com.tecsisa.wr.kql.ast.EqualityOperator.{`=`, <>}
-import com.tecsisa.wr.kql.ast.LogicOperator.{and, not, or}
-import com.tecsisa.wr.kql.ast.NumericOperator.{>, >=, <, <=}
+import com.tecsisa.wr.kql.ast.EqualityOperator.{ `=`, <> }
+import com.tecsisa.wr.kql.ast.LogicOperator.{ and, not, or }
+import com.tecsisa.wr.kql.ast.NumericOperator.{ >, >=, <, <= }
 import fastparse.all._
 
 trait Operators {
