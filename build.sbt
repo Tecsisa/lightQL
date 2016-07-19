@@ -11,5 +11,5 @@ libraryDependencies ++= Vector(
   Library.scalaCheck % "test"
 )
 
-initialCommands := """|import com.tecsisa.wr.kql._
+initialCommands := """|import com.tecsisa.wr.kql.parser.KqlParser._
                       |""".stripMargin

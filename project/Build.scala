@@ -23,6 +23,8 @@ object Build extends AutoPlugin {
       "-encoding", "UTF-8",
       "-Ywarn-unused-import"
     ),
+    // @see
+    // http://stackoverflow.com/questions/26940253/in-sbt-how-do-you-override-scalacoptions-for-console-in-all-configurations
     scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Ywarn-unused-import")),
     scalacOptions in (Test, console) := (scalacOptions in (Compile, console)).value,
     unmanagedSourceDirectories.in(Compile) := Vector(scalaSource.in(Compile).value),
