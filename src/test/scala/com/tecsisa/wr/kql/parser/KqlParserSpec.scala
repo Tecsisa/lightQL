@@ -23,7 +23,7 @@ class KqlParserSpec extends BaseTest {
       parsed shouldBe a[Failure]
     }
     "parse a expression with a simple query clause" in {
-      val e = "search type1 in index1 with query field1 = 10 and field2 <> 20 or field3 = 30 and field4 = 40"
+      val e = "search type1 in index1 with query field1 = 10 and field2 <> 20 and (field22 = 25 or field3 = 30) and field4 = 40"
       val parsed = expr.parse(e)
       parsed shouldBe a[Success]
       println(parsed.get.value)
