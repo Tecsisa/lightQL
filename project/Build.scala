@@ -23,6 +23,8 @@ object Build extends AutoPlugin {
       "-encoding", "UTF-8",
       "-Ywarn-unused-import"
     ),
+    scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Ywarn-unused-import")),
+    scalacOptions in (Test, console) := (scalacOptions in (Compile, console)).value,
     unmanagedSourceDirectories.in(Compile) := Vector(scalaSource.in(Compile).value),
     unmanagedSourceDirectories.in(Test) := Vector(scalaSource.in(Test).value),
 
