@@ -5,17 +5,15 @@ package parser
 import com.tecsisa.wr.kql.ast.ClauseTree
 import com.tecsisa.wr.kql.ast.ClauseTree.{Clause, CombinedClause}
 import com.tecsisa.wr.kql.ast.LogicOperator
+import com.tecsisa.wr.kql.ast.Operator.Associativity
 import fastparse.all._
 import fastparse.core.{Mutable, ParseCtx, Parser}
 import scala.annotation.tailrec
 
 case object ClauseTreeParse extends Parser[ClauseTree] with Operators with BasicParsers {
 
-  val lParenLah = P(space ~ &("("))
-  val rParenLah = P(space ~ &(")"))
-  val charSeq = P(CharIn('a' to 'z', '0' to '9', "_-"))
-  val field   = P(charSeq.rep)
-  val value   = P(integral | quoted(CharPred(_ != '"').rep))
+  val field = P(charSeq.rep)
+  val value = P(integral | quoted(CharPred(_ != '"').rep))
   val clause = P(space ~ field.! ~ space ~ clauseOperator ~ space ~ value.!).map {
     case (f, op, v) => Clause(f, op, v)
   }
@@ -31,7 +29,7 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
    */
 
   private def computeAtom(cfg: ParseCtx, index: Int): Mutable[ClauseTree] = {
-    lParenLah.parseRec(cfg, index) match { // lookahead with no consumption
+    openParenLah.parseRec(cfg, index) match { // lookahead with no consumption
       case _: Mutable.Success[_] =>
         // left paren consumption
         openParen.parseRec(cfg, index) match {
@@ -58,10 +56,14 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
           def current(i: Int = idx) = success(cfg.success, lct, i, tps, cut)
           logicOperatorSection.parseRec(cfg, idx) match {
             case Mutable.Success(op, idxOp, _, _) =>
-              if (minPrec > 1) { // TODO: Review precedences
+              if (op.precedence < minPrec) {
                 current()
               } else {
-                val nextExpr = computeExpr(cfg, idxOp, minPrec + 1)
+                val newMinPrec = op.associativity match {
+                  case Associativity.Left => op.precedence + 1
+                  case _                  => op.precedence
+                }
+                val nextExpr = computeExpr(cfg, idxOp, newMinPrec)
                 nextExpr match {
                   case rct: Mutable.Success[ClauseTree] =>
                     loop(computeOp(lct, op, rct.value), rct.index, rct.traceParsers, rct.cut)
@@ -70,7 +72,7 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
                 } // nextExpr parsing (recursion)
               }
             case _: Mutable.Failure =>
-              rParenLah.parseRec(cfg, idx) match { // lookahead with no consumption
+              closeParenLah.parseRec(cfg, idx) match { // lookahead with no consumption
                 case _: Mutable.Success[_] =>
                   // right parens consumption (check if this is correct...)
                   closeParen.rep.parseRec(cfg, idx) match {

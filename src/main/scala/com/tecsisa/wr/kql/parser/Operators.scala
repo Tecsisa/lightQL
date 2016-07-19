@@ -18,10 +18,11 @@ trait Operators {
     case "<"  => <
     case "<=" => <=
   }
-  val logicOperator = P(IgnoreCase("and").! | IgnoreCase("or").! | IgnoreCase("not").!).map {
-    case "and" => and
-    case "or"  => or
-    case "not" => not
-  }
+  val logicOperator =
+    P(IgnoreCase("and").! | IgnoreCase("or").! | IgnoreCase("not").!).map(_.toLowerCase).map {
+      case "and" => and
+      case "or"  => or
+      case "not" => not
+    }
   val clauseOperator = eqOperator | numericOperator
 }
