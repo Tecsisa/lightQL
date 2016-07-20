@@ -36,8 +36,4 @@ object NumericOperator {
 object LogicOperator {
   case object and extends LogicOperator with BinaryOperator
   case object or  extends LogicOperator with BinaryOperator
-  case object not extends LogicOperator with UnaryOperator {
-    override val precedence: Precedence       = 2
-    override val associativity: Associativity = Right
-  }
 }
