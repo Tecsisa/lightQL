@@ -7,8 +7,7 @@ name := "wr-kql"
 libraryDependencies ++= Vector(
   Library.fastParse,
   Library.elastic,
-  Library.scalaTest % "test",
-  Library.scalaCheck % "test"
+  Library.scalaTest % "test"
 )
 
 initialCommands := """|import com.tecsisa.wr.kql.parser.KqlParser._
