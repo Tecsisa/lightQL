@@ -28,11 +28,6 @@ final case class Search(types: Seq[DocumentType],
     extends Kql
 
 class KqlOps(underlying: Kql) {
-  // using asQuery
-  /** val search: Kql = parsed.get.value
-      implicit val client = TransportClient.builder().build()
-      search.asQuery.search() //opcional: (client)
-    */
   def asQuery[Q](implicit materializer: Materializer[Q]): Q =
     materializer.asQuery(underlying)
 }

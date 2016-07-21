@@ -12,4 +12,11 @@ libraryDependencies ++= Vector(
 )
 
 initialCommands := """|import com.tecsisa.wr.kql.parser.KqlParser._
+                      |import com.tecsisa.wr.kql.repo.Repo
+                      |import org.elasticsearch.action.ActionFuture
+                      |import org.elasticsearch.action.search.SearchResponse
+                      |import org.elasticsearch.client.transport.TransportClient
+                      |import org.elasticsearch.common.settings.Settings
+                      |import org.elasticsearch.common.transport.InetSocketTransportAddress
+                      |import java.net.InetAddress
                       |""".stripMargin
