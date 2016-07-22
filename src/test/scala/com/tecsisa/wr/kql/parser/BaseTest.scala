@@ -20,5 +20,5 @@ val e = "search employee in megacorp with query age = 35"
 val parsed = expr.parse(e)
 val q = parsed.get.value.asQuery
 val res = repo.search(q)
-val hits = res.get().getHits()
+res.map(_.getHits().getTotalHits).foreach(println)
   */

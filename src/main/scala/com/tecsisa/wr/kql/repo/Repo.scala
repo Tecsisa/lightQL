@@ -2,9 +2,9 @@ package com.tecsisa.wr
 package kql
 package repo
 
-import org.elasticsearch.action.ActionFuture
 import org.elasticsearch.action.search.{ SearchRequest, SearchResponse }
 import org.elasticsearch.client.Client
+import scala.concurrent.Future
 
 trait Repo[+C, -Q, +R] {
 //  type R
@@ -13,11 +13,13 @@ trait Repo[+C, -Q, +R] {
 }
 
 object Repo {
-  def apply(client: Client): Repo[Client, SearchRequest, ActionFuture[SearchResponse]] =
-    new Repo[Client, SearchRequest, ActionFuture[SearchResponse]] {
+  def apply(client: Client): Repo[Client, SearchRequest, Future[SearchResponse]] =
+    new Repo[Client, SearchRequest, Future[SearchResponse]] {
 //      type R = ActionFuture[SearchResponse]
       val conn: Client = client
-      def search(query: SearchRequest): ActionFuture[SearchResponse] =
-        conn.search(query)
+      def search(query: SearchRequest): Future[SearchResponse] = {
+        val listener = new ActionListenerAdapter
+        listener.executeFuture(conn, query)
+      }
     }
 }
