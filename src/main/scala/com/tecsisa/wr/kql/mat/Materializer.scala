@@ -9,7 +9,7 @@ import com.tecsisa.wr.kql.ast.{ ClauseTree, Kql, Search }
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.client.Requests
 import org.elasticsearch.index.query.{ BoolQueryBuilder, QueryBuilder }
-import org.elasticsearch.index.query.QueryBuilders.{ boolQuery, termQuery }
+import org.elasticsearch.index.query.QueryBuilders.{ constantScoreQuery, boolQuery, termQuery }
 import org.elasticsearch.search.builder.SearchSourceBuilder.searchSource
 
 trait Materializer[+Q] {
@@ -53,7 +53,10 @@ object Materializer {
           }
         case _: CombinedClause => f(loop(ct, boolQuery()))
       }
-      boolQuery().filter(loop(query, boolQuery()))
+      // a `constant_score` query is syntactic sugar for a `bool`
+      // query that contains just a filter and no one scoring query
+      // @see http://bit.ly/29TzGph
+      constantScoreQuery(loop(query, boolQuery()))
     }
   }
 }
