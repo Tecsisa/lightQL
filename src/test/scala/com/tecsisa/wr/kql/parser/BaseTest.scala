@@ -11,7 +11,7 @@ trait BaseTest extends WordSpec with Matchers {
 }
 
 /**
-
+import scala.concurrent.ExecutionContext.Implicits.global
 val settings = Settings.settingsBuilder().put("cluster.name", "wr-pre").build()
 val client = TransportClient.builder().settings(settings).build().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("192.168.0.204"), 9300))
 val repo = Repo(client)

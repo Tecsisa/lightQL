@@ -53,7 +53,7 @@ object Materializer {
           }
         case _: CombinedClause => f(loop(ct, boolQuery()))
       }
-      loop(query, boolQuery())
+      boolQuery().filter(loop(query, boolQuery()))
     }
   }
 }
