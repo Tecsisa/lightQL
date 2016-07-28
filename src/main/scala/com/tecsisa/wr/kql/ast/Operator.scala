@@ -23,7 +23,7 @@ sealed trait LogicOperator  extends Operator
 
 object EqualityOperator {
   case object `=` extends BinaryOperator
-  case object <>  extends BinaryOperator
+  case object !=  extends BinaryOperator
 }
 
 object NumericOperator {

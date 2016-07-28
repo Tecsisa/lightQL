@@ -6,16 +6,10 @@ name := "wr-kql"
 
 libraryDependencies ++= Vector(
   Library.fastParse,
-  Library.elastic,
-  Library.scalaTest % "test"
+  Library.elastic4s,
+  Library.elastic4sTestkit % "test"
 )
 
 initialCommands := """|import com.tecsisa.wr.kql.parser.KqlParser._
-                      |import com.tecsisa.wr.kql.repo.Repo
-                      |import org.elasticsearch.action.ActionFuture
-                      |import org.elasticsearch.action.search.SearchResponse
-                      |import org.elasticsearch.client.transport.TransportClient
-                      |import org.elasticsearch.common.settings.Settings
-                      |import org.elasticsearch.common.transport.InetSocketTransportAddress
-                      |import java.net.InetAddress
+                      |import com.tecsisa.wr.kql.ast.ClauseTree._
                       |""".stripMargin

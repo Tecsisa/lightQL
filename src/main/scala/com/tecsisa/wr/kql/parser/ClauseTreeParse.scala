@@ -2,29 +2,30 @@ package com.tecsisa.wr
 package kql
 package parser
 
+import fastparse.noApi._
+import fastparse.core.{ Mutable, ParseCtx, Parser }
 import com.tecsisa.wr.kql.ast.ClauseTree
 import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.wr.kql.ast.LogicOperator
 import com.tecsisa.wr.kql.ast.Operator.Associativity
-import fastparse.all._
-import fastparse.core.{ Mutable, ParseCtx, Parser }
+import com.tecsisa.wr.kql.parser.white._
 import scala.annotation.tailrec
 
 case object ClauseTreeParse extends Parser[ClauseTree] with Operators with BasicParsers {
 
-  val field = P(charSeq.rep)
+  val field = P(charSeq.rep).!
   val value = P(integral | quoted(CharPred(_ != '"').rep))
-  val clause = P(space ~ field.! ~ space ~ clauseOperator ~ space ~ value.!).map {
+  val clause = P(field ~ clauseOperator ~ value).map {
     case (f, op, v) => Clause(f, op, v)
   }
-  val logicOperatorSection = P(space ~ logicOperator)
+  val logicOperatorSection = P(logicOperator)
 
   def parseRec(cfg: ParseCtx, index: Int): Mutable[ClauseTree] = {
     computeExpr(cfg, index)
   }
 
   /*
-    Helper methods named following the `precedence climbing` algorithm.
+    Helper methods named after the `precedence climbing` algorithm.
     @see http://eli.thegreenplace.net/2012/08/02/parsing-expressions-by-precedence-climbing
    */
 

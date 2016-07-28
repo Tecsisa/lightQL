@@ -2,32 +2,68 @@ package com.tecsisa.wr
 package kql
 package parser
 
-import com.tecsisa.wr.kql.ast.{DocumentType, IndexName, Search}
-import com.tecsisa.wr.kql.parser.KqlParser.expr
+import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
+import com.tecsisa.wr.kql.ast.{ EqualityOperator => EqOp }
+import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
+import com.tecsisa.wr.kql.ast.Query
+import org.scalatest.WordSpec
 
-class KqlParserSpec extends BaseTest {
+class KqlParserSpec extends WordSpec with QueryMatchers {
 
   "A KqlParser" should {
-    "parse a simple expression with only a single document type and index" in {
-      val dt     = "type1"
-      val index  = "index1"
-      val e      = s"search $dt in $index"
-      val parsed = expr.parse(e)
-      parsed shouldBe a[Success]
-      parsed.get.value shouldBe Search(Vector(DocumentType(dt)), Vector(IndexName(index)))
+    "parse: `foo = 25`" in {
+      "foo = 25" should parseTo { Query(Clause("foo", EqOp.`=`, 25)) }
     }
-    "not parse and fail when the document type is not set" in {
-      val index  = "index1"
-      val e      = s"search in $index"
-      val parsed = expr.parse(e)
-      parsed shouldBe a[Failure]
+    "parse: `foo = \"foobar\"`" in {
+      "foo = \"bar\"" should parseTo { Query(Clause("foo", EqOp.`=`, "bar")) }
     }
-    "parse a expression with a simple query clause" in {
-//      val e = "search type1 in index1 with query field1 = 10 and field2 <> 20 and (field22 = 25 or field3 = 30) and field4 = 40"
-      val e = "search type1 in index1 with query price = 20 or product = 10 and price <> 30"
-      val parsed = expr.parse(e)
-      parsed shouldBe a[Success]
-      println(parsed.get.value)
+    "parse: `foo != 25`" in {
+      "foo != 25" should parseTo { Query(Clause("foo", EqOp.!=, 25)) }
+    }
+    "parse: `foo = 25 and bar = 100`" in {
+      "foo = 25 and bar = 100" should parseTo {
+        Query(CombinedClause(Clause("foo", EqOp.`=`, 25), and, Clause("bar", EqOp.`=`, 100)))
+      }
+    }
+    "parse: `foo = 25 and bar = 100 or baz = 150`" in {
+      "foo = 25 and bar = 100 or baz = 150" should parseTo {
+        Query(
+          CombinedClause(
+            CombinedClause(Clause("foo", EqOp.`=`, 25), and, Clause("bar", EqOp.`=`, 100)),
+            or,
+            Clause("baz", EqOp.`=`, 150)
+          )
+        )
+      }
+    }
+    "parse: `(foo = 25 and bar = 100) or baz = 150`" in {
+      "(foo = 25 and bar = 100) or baz = 150" should parseTo {
+        Query(
+          CombinedClause(
+            CombinedClause(Clause("foo", EqOp.`=`, 25), and, Clause("bar", EqOp.`=`, 100)),
+            or,
+            Clause("baz", EqOp.`=`, 150)
+          )
+        )
+      }
+    }
+    "parse: `foo = 25 and (bar = 100 or baz = 150)`" in {
+      "foo = 25 and (bar = 100 or baz = 150)" should parseTo {
+        Query(
+          CombinedClause(
+            Clause("foo", EqOp.`=`, 25),
+            and,
+            CombinedClause(Clause("bar", EqOp.`=`, 100), or, Clause("baz", EqOp.`=`, 150))
+          )
+        )
+      }
+    }
+    "not parse: `foo = foobar`" in {
+      "foo = foobar" should notParse
+    }
+    "not parse: `foo != foobar`" in {
+      "foo != foobar" should notParse
     }
   }
+
 }
