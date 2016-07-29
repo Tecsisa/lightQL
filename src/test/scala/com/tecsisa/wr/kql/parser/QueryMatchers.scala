@@ -16,10 +16,9 @@ trait QueryMatchers extends Matchers {
   def parseTo(query: Query): Matcher[String] = new Matcher[String] {
     override def apply(left: String): MatchResult = {
       val parsed = expr.parse(left)
-      val passes = parsed.isInstanceOf[Success] && parsed.get.value == query
-      val msg = parsed match {
-        case Success(v, _)  => s"but parsed to $v"
-        case error: Failure => s"with failure: ${error.msg}"
+      val (msg, passes) = parsed match {
+        case Success(v, _)  => (s"but parsed to $v", parsed.get.value == query)
+        case error: Failure => (s"with failure: ${error.msg}", false)
       }
       MatchResult(
           passes,
@@ -32,10 +31,9 @@ trait QueryMatchers extends Matchers {
   def notParse: Matcher[String] = new Matcher[String] {
     override def apply(left: String): MatchResult = {
       val parsed = expr.parse(left)
-      val passes = parsed.isInstanceOf[Failure]
-      val msg = parsed match {
-        case Success(v, _)  => v
-        case error: Failure => error.msg
+      val (msg, passes) = parsed match {
+        case Success(v, _)  => (v, false)
+        case error: Failure => (error.msg, true)
       }
       MatchResult(
           passes,
