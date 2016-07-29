@@ -3,7 +3,6 @@ package kql
 package parser
 
 import com.tecsisa.wr.kql.ast.Query
-import com.tecsisa.wr.kql.parser.KqlParser.expr
 import fastparse.core.Parsed.Success
 import org.scalatest.Matchers
 import org.scalatest.matchers.{ MatchResult, Matcher }
@@ -15,7 +14,7 @@ trait QueryMatchers extends Matchers {
 
   def parseTo(query: Query): Matcher[String] = new Matcher[String] {
     override def apply(left: String): MatchResult = {
-      val parsed = expr.parse(left)
+      val parsed = KqlParser().parse(left)
       val (msg, passes) = parsed match {
         case Success(v, _)  => (s"but parsed to $v", parsed.get.value == query)
         case error: Failure => (s"with failure: ${error.msg}", false)
@@ -30,7 +29,7 @@ trait QueryMatchers extends Matchers {
 
   def notParse: Matcher[String] = new Matcher[String] {
     override def apply(left: String): MatchResult = {
-      val parsed = expr.parse(left)
+      val parsed = KqlParser().parse(left)
       val (msg, passes) = parsed match {
         case Success(v, _)  => (v, false)
         case error: Failure => (error.msg, true)
