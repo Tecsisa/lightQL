@@ -4,6 +4,7 @@ package parser
 
 import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.wr.kql.ast.{ EqualityOperator => EqOp }
+import com.tecsisa.wr.kql.ast.{ MatchingOperator => MatchOp }
 import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
 import com.tecsisa.wr.kql.ast.Query
 import org.scalatest.WordSpec
@@ -15,10 +16,16 @@ class KqlParserSpec extends WordSpec with QueryMatchers {
       "foo = 25" should parseTo { Query(Clause("foo", EqOp.`=`, 25)) }
     }
     "parse: `foo = \"foobar\"`" in {
-      "foo = \"bar\"" should parseTo { Query(Clause("foo", EqOp.`=`, "bar")) }
+      "foo = \"foobar\"" should parseTo { Query(Clause("foo", EqOp.`=`, "foobar")) }
     }
     "parse: `foo != 25`" in {
       "foo != 25" should parseTo { Query(Clause("foo", EqOp.!=, 25)) }
+    }
+    "parse: `foo ~ \"foobar\"`" in {
+      "foo ~ \"foobar\"" should parseTo { Query(Clause("foo", MatchOp.~, "foobar")) }
+    }
+    "parse: `foo !~ \"foobar\"`" in {
+      "foo !~ \"foobar\"" should parseTo { Query(Clause("foo", MatchOp.!~, "foobar")) }
     }
     "parse: `foo = 25 and bar = 100`" in {
       "foo = 25 and bar = 100" should parseTo {

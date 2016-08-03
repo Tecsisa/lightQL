@@ -21,9 +21,16 @@ sealed trait UnaryOperator  extends Operator
 sealed trait BinaryOperator extends Operator
 sealed trait LogicOperator  extends Operator
 
+sealed trait EqualityOperator extends BinaryOperator
 object EqualityOperator {
-  case object `=` extends BinaryOperator
-  case object !=  extends BinaryOperator
+  case object `=` extends EqualityOperator
+  case object !=  extends EqualityOperator
+}
+
+sealed trait MatchingOperator extends BinaryOperator
+object MatchingOperator {
+  case object ~  extends MatchingOperator
+  case object !~ extends MatchingOperator
 }
 
 object NumericOperator {

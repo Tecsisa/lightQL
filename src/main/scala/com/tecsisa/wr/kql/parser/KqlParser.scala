@@ -6,18 +6,12 @@ import fastparse.noApi._
 import com.tecsisa.wr.kql.ast.Query
 import com.tecsisa.wr.kql.parser.white._
 
-object KqlParser extends KqlParser
+object KqlParser extends KqlParser {
+  def apply(): Parser[Query] = P(space ~ clauseTree ~ End) map Query
+}
 
 trait KqlParser extends BasicParsers with Operators {
 
   /** ClauseTree section */
   val clauseTree = P(ClauseTreeParse)
-
-  /** The Expression */
-  // format: off
-  val expr =
-    P(space ~ clauseTree ~ End).map { clauseTree =>
-      Query(clauseTree)
-    }
-  // format: on
 }
