@@ -71,6 +71,15 @@ class KqlParserSpec extends WordSpec with QueryMatchers {
     "not parse: `foo != foobar`" in {
       "foo != foobar" should notParse
     }
+    "not parse: `(foo = 25`" in {
+      "(foo = 25" should notParse
+    }
+    "not parse: `foo = 25)`" in {
+      "foo = 25)" should notParse
+    }
+    "not parse: `foo = 25 and ((bar = 100 or baz = 150)`" in {
+      "foo = 25 and ((bar = 100 or baz = 150)" should notParse
+    }
   }
 
 }

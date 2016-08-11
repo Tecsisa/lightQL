@@ -21,7 +21,7 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
   val logicOperatorSection = P(logicOperator)
 
   def parseRec(cfg: ParseCtx, index: Int): Mutable[ClauseTree] = {
-    computeExpr(cfg, index)
+    computeExpr(cfg, index, depth = 0) match { case (ct, _) => ct }
   }
 
   /*
@@ -29,14 +29,14 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
     @see http://eli.thegreenplace.net/2012/08/02/parsing-expressions-by-precedence-climbing
    */
 
-  private def computeAtom(cfg: ParseCtx, index: Int): Mutable[ClauseTree] = {
+  private def computeAtom(cfg: ParseCtx, index: Int, depth: Int): Mutable[ClauseTree] = {
     openParenLah.parseRec(cfg, index) match { // lookahead with no consumption
       case _: Mutable.Success[_] =>
         // left paren consumption
         openParen.parseRec(cfg, index) match {
           case s: Mutable.Success[_] =>
             // starting on a nested expression
-            computeExpr(cfg, s.index)
+            computeExpr(cfg, s.index, depth + 1) match { case (ct, _) => ct }
           case f: Mutable.Failure =>
             failMore(f, index, cfg.logDepth, f.traceParsers, f.cut)
         }
@@ -46,15 +46,21 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
     }
   }
 
-  private def computeExpr(cfg: ParseCtx, index: Int, minPrec: Int = 1): Mutable[ClauseTree] = {
-    computeAtom(cfg, index) match {
+  private def computeExpr(cfg: ParseCtx, index: Int, depth: Int, minPrec: Int = 1): (Mutable[ClauseTree], Int) = {
+    computeAtom(cfg, index, depth) match {
       case atom: Mutable.Success[ClauseTree] =>
         @tailrec
         def loop(lct: ClauseTree,
                  idx: Int,
                  tps: Set[Parser[_]],
-                 cut: Boolean): Mutable[ClauseTree] = {
-          def current(i: Int = idx) = success(cfg.success, lct, i, tps, cut)
+                 cut: Boolean,
+                 dp:  Int): (Mutable[ClauseTree], Int) = {
+          def current(i: Int = idx, d:Int = dp) = {
+            (cfg.input.length, i) match {
+              case (`i`, _) if d != 0 => (fail(cfg.failure, i, tps, cut), d)
+              case _ => (success(cfg.success, lct, i, tps, cut), d)
+            }
+          }
           logicOperatorSection.parseRec(cfg, idx) match {
             case Mutable.Success(op, idxOp, _, _) =>
               if (op.precedence < minPrec) {
@@ -64,13 +70,14 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
                   case Associativity.Left => op.precedence + 1
                   case _                  => op.precedence
                 }
-                val nextExpr = computeExpr(cfg, idxOp, newMinPrec)
-                nextExpr match {
-                  case rct: Mutable.Success[ClauseTree] =>
-                    loop(computeOp(lct, op, rct.value), rct.index, rct.traceParsers, rct.cut)
-                  case f: Mutable.Failure =>
-                    failMore(f, idxOp, cfg.logDepth)
-                } // nextExpr parsing (recursion)
+                computeExpr(cfg, idxOp, dp, newMinPrec) match {
+                  case (nextExpr, d) => nextExpr match {
+                    case rct: Mutable.Success[ClauseTree] =>
+                      loop(computeOp(lct, op, rct.value), rct.index, rct.traceParsers, rct.cut, d)
+                    case f: Mutable.Failure =>
+                      (failMore(f, idxOp, cfg.logDepth), d)
+                  }
+                }// nextExpr parsing (recursion)
               }
             case _: Mutable.Failure =>
               closeParenLah.parseRec(cfg, idx) match { // lookahead with no consumption
@@ -79,9 +86,9 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
                   closeParen.rep.parseRec(cfg, idx) match {
                     case rparen: Mutable.Success[_] =>
                       // success with the expression after consuming right parens
-                      current(rparen.index)
+                      current(rparen.index, dp - 1)
                     case f2: Mutable.Failure =>
-                      failMore(f2, idx, cfg.logDepth, f2.traceParsers, f2.cut)
+                      (failMore(f2, idx, cfg.logDepth, f2.traceParsers, f2.cut), dp)
                   }
                 case _: Mutable.Failure =>
                   // success with the expression with no parens consumption
@@ -89,9 +96,9 @@ case object ClauseTreeParse extends Parser[ClauseTree] with Operators with Basic
               }
           } // logicOperator parsing
         }   // loop
-        loop(atom.value, atom.index, atom.traceParsers, atom.cut)
+        loop(atom.value, atom.index, atom.traceParsers, atom.cut, depth)
       case f: Mutable.Failure =>
-        failMore(f, index, cfg.logDepth)
+        (failMore(f, index, cfg.logDepth), depth)
     } // clause parsing
   }
 
