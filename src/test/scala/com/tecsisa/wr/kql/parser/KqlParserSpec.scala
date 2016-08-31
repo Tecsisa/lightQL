@@ -32,6 +32,11 @@ class KqlParserSpec extends WordSpec with QueryMatchers {
         Query(CombinedClause(Clause("foo", EqOp.`=`, 25), and, Clause("bar", EqOp.`=`, 100)))
       }
     }
+    "parse: `(foo = 25 and (bar = 100))`" in {
+      "(foo = 25 and (bar = 100))" should parseTo {
+        Query(CombinedClause(Clause("foo", EqOp.`=`, 25), and, Clause("bar", EqOp.`=`, 100)))
+      }
+    }
     "parse: `foo = 25 and bar = 100 or baz = 150`" in {
       "foo = 25 and bar = 100 or baz = 150" should parseTo {
         Query(
