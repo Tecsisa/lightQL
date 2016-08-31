@@ -17,11 +17,11 @@ trait Operators extends BasicParsers {
     case "~"  => MatchingOperator.~
     case "!~" => MatchingOperator.!~
   }
-  val numericOperator = P(">" | ">=" | "<" | "<=").!.map {
-    case ">"  => >
+  val numericOperator = P(">=" | "<=" | "<" | ">").!.map {
     case ">=" => >=
-    case "<"  => <
     case "<=" => <=
+    case "<"  => <
+    case ">"  => >
   }
   val logicOperator =
     monospaced(P(IgnoreCase("and") | IgnoreCase("or")).!).map(_.toLowerCase).map {

@@ -5,8 +5,8 @@ package mat
 import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
 import com.tecsisa.wr.kql.ast.{ ClauseTree, EqualityOperator => EqOp, LogicOperator }
-import com.tecsisa.wr.kql.ast.{ Query, MatchingOperator => MatchOp }
-import org.elasticsearch.index.query.QueryBuilders.{ boolQuery, matchQuery, termQuery }
+import com.tecsisa.wr.kql.ast.{ Query, MatchingOperator => MatchOp, NumericOperator => NumOp }
+import org.elasticsearch.index.query.QueryBuilders.{ boolQuery, matchQuery, termQuery, rangeQuery }
 import org.elasticsearch.index.query.{ BoolQueryBuilder, QueryBuilder }
 
 trait Materializer[T] {
@@ -21,10 +21,14 @@ object Materializer {
 
           def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryBuilder): QueryBuilder =
             c.op match {
-              case EqOp.`=`  => qb.filter(termQuery(c.field, c.value))
-              case EqOp.!=   => qb.mustNot(termQuery(c.field, c.value))
-              case MatchOp.~ => qb.must(matchQuery(c.field, c.value))
-              case _         => qb.mustNot(matchQuery(c.field, c.value))
+              case EqOp.`=`   => qb.filter(termQuery(c.field, c.value))
+              case EqOp.!=    => qb.mustNot(termQuery(c.field, c.value))
+              case MatchOp.~  => qb.must(matchQuery(c.field, c.value))
+              case MatchOp.!~ => qb.mustNot(matchQuery(c.field, c.value))
+              case NumOp.<    => qb.filter(rangeQuery(c.field).lt(c.value))
+              case NumOp.<=   => qb.filter(rangeQuery(c.field).lte(c.value))
+              case NumOp.>    => qb.filter(rangeQuery(c.field).gt(c.value))
+              case NumOp.>=   => qb.filter(rangeQuery(c.field).gte(c.value))
             }
 
           def buildQueryFromCombinedAndClause[V](qb: BoolQueryBuilder,
@@ -42,10 +46,14 @@ object Materializer {
           ct match {
             case Clause(field, op, value) =>
               op match {
-                case EqOp.`=`  => termQuery(field, value)
-                case EqOp.!=   => boolQuery().mustNot(termQuery(field, value))
-                case MatchOp.~ => matchQuery(field, value)
-                case _         => boolQuery().mustNot(matchQuery(field, value))
+                case EqOp.`=`   => termQuery(field, value)
+                case EqOp.!=    => boolQuery().mustNot(termQuery(field, value))
+                case MatchOp.~  => matchQuery(field, value)
+                case MatchOp.!~ => boolQuery().mustNot(matchQuery(field, value))
+                case NumOp.<    => rangeQuery(field).lt(value)
+                case NumOp.<=   => rangeQuery(field).lte(value)
+                case NumOp.>    => rangeQuery(field).gt(value)
+                case NumOp.>=   => rangeQuery(field).gte(value)
               }
             case CombinedClause(lct, lop, rct) =>
               (lct, rct) match {
