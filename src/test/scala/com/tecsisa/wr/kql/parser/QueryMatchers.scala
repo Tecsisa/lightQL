@@ -17,12 +17,12 @@ trait QueryMatchers extends Matchers {
       val parsed = KqlParser().parse(left)
       val (msg, passes) = parsed match {
         case Success(v, _)  => (s"but parsed to $v", parsed.get.value == query)
-        case error: Failure => (s"with failure: ${error.msg}", false)
+        case error: Failure => (s"with failure: ${ error.msg }", false)
       }
       MatchResult(
-          passes,
-          s"The string `$left` didn't match the expected query: $query $msg",
-          s"The string `$left` matched the expected query: $query"
+        passes,
+        s"The string `$left` didn't match the expected query: $query $msg",
+        s"The string `$left` matched the expected query: $query"
       )
     }
   }
@@ -35,9 +35,9 @@ trait QueryMatchers extends Matchers {
         case error: Failure => (error.msg, true)
       }
       MatchResult(
-          passes,
-          s"The string `$left` should not parse, however it did parse to: $msg",
-          s"The string did not parse wih failure: $msg"
+        passes,
+        s"The string `$left` should not parse, however it did parse to: $msg",
+        s"The string did not parse wih failure: $msg"
       )
     }
   }
