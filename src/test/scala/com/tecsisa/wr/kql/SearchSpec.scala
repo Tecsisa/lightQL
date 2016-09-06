@@ -68,6 +68,24 @@ class SearchSpec extends SearchBaseTest {
       }
       search in "songs" query q1 should haveTotalHits(1)
     }
+    "find range results in queries with just a single clause" in {
+      val q1 = q("year <= 1955")
+      search in "songs" query q1 should haveTotalHits(1)
+      val q2 = q("year >= 1955")
+      search in "songs" query q2 should haveTotalHits(10)
+      val q3 = q("year > 1955")
+      search in "songs" query q3 should haveTotalHits(9)
+      val q4 = q("year < 1955")
+      search in "songs" query q4 should haveTotalHits(0)
+    }
+    "find range results in queries with a combined clause" in {
+      val q1 = q("year >= 1967 and year < 2002")
+      search in "songs" query q1 should haveTotalHits(5)
+      val q2 = q("year > 1967 and year <= 2002")
+      search in "songs" query q2 should haveTotalHits(6)
+      val q3 = q("year >= 1967 and year <= 2002")
+      search in "songs" query q3 should haveTotalHits(7)
+    }
   }
 
 }
