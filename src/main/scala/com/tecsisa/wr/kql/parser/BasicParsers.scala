@@ -16,7 +16,13 @@ trait BasicParsers extends Helpers {
   val digits = P(CharsWhile(Digits))
 
   // A parser for integral numbers
-  val integral = P("0" | CharIn('1' to '9') ~ digits.?).!.map(_.toInt)
+  val integral = P("0" | CharIn('1' to '9') ~ digits.?)
+
+  // A parser for integer numbers
+  val integer = P("-".? ~ integral).!.map(_.toInt)
+
+  // A parser for double numbers (IEEE 754 floating point)
+  val double = P("-".? ~ integral ~ "." ~ integral.rep(min = 1, max = 16)).!.map(_.toDouble)
 
   // A sequence of chars
   val charSeq = P(CharIn('a' to 'z', '0' to '9', "_-"))

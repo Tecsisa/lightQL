@@ -16,8 +16,13 @@ class KqlParserSpec extends WordSpec with QueryMatchers {
     "parse: `foo = 25`" in {
       "foo = 25" should parseTo { Query(Clause("foo", EqOp.`=`, 25)) }
     }
-    "parse: `foo <= 25`" in {
-      "foo <= 25" should parseTo { Query(Clause("foo", NumOp.<=, 25)) }
+    "parse: `foo <= -25`" in {
+      "foo <= -25" should parseTo { Query(Clause("foo", NumOp.<=, -25)) }
+    }
+    "parse: `foo = 2.0000000000000002`" in {
+      "foo = 2.0000000000000002" should parseTo {
+        Query(Clause("foo", EqOp.`=`, 2.0000000000000002))
+      }
     }
     "parse: `foo = \"foobar\"`" in {
       "foo = \"foobar\"" should parseTo { Query(Clause("foo", EqOp.`=`, "foobar")) }
@@ -42,7 +47,9 @@ class KqlParserSpec extends WordSpec with QueryMatchers {
       }
     }
     "parse: `foo < 25 and bar >= 100`" in {
-      "foo < 25 and bar >= 100" should parseTo { Query(CombinedClause(Clause("foo", NumOp.<, 25), and, Clause("bar", NumOp.>=, 100))) }
+      "foo < 25 and bar >= 100" should parseTo {
+        Query(CombinedClause(Clause("foo", NumOp.<, 25), and, Clause("bar", NumOp.>=, 100)))
+      }
     }
     "parse: `foo = 25 and bar = 100 or baz = 150`" in {
       "foo = 25 and bar = 100 or baz = 150" should parseTo {
@@ -82,6 +89,12 @@ class KqlParserSpec extends WordSpec with QueryMatchers {
     }
     "not parse: `foo != foobar`" in {
       "foo != foobar" should notParse
+    }
+    "not parse: `foo = -02.4`" in {
+      "foo = -02.4" should notParse
+    }
+    "not parse: `foo = 1.00000000000000002`" in {
+      "foo = 1.00000000000000002" should notParse
     }
     "not parse: `(foo = 25`" in {
       "(foo = 25" should notParse
