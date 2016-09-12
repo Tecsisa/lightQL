@@ -55,7 +55,8 @@ class SearchSpec extends SearchBaseTest {
       search in "songs" query q6 should haveTotalHits(10)
     }
     "find exact results in unbalanced queries" in {
-      val q1 = q("composer = \"Johann Sebastian Bach\" and genre = \"Classical\" and year = 1955")
+      val q1 = q(
+        "composer = \"Johann Sebastian Bach\" and genre = \"Classical\" and year = 1955 and price = 0.99")
       search in "songs" query q1 should haveTotalHits(1)
       val q2 =
         q("composer = \"Johann Sebastian Bach\" and (genre = \"Classical\" and year = 1955)")
@@ -85,6 +86,10 @@ class SearchSpec extends SearchBaseTest {
       search in "songs" query q2 should haveTotalHits(6)
       val q3 = q("year >= 1967 and year <= 2002")
       search in "songs" query q3 should haveTotalHits(7)
+      val q4 = q("price < 2.11 and price > 0.99")
+      search in "songs" query q4 should haveTotalHits(7)
+      val q5 = q("year >= 1985 and price > 1.99")
+      search in "songs" query q5 should haveTotalHits(1)
     }
   }
 

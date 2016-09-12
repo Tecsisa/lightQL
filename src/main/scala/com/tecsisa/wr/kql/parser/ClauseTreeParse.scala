@@ -14,7 +14,7 @@ import scala.annotation.tailrec
 case object ClauseTreeParse extends Parser[ClauseTree] with Operators with BasicParsers {
 
   val field = P(charSeq.rep).!
-  val value = P(integral | quoted(CharPred(_ != '"').rep))
+  val value = P(double | integer | quoted(CharPred(_ != '"').rep))
   val clause = P(field ~ clauseOperator ~ value).map {
     case (f, op, v) => Clause(f, op, v)
   }
