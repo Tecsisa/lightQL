@@ -48,6 +48,12 @@ trait BasicParsers extends Helpers {
   // A parser for look ahead of closed parens
   val closeParenLah = P(space ~ &(")"))
 
+  // A parser for open brackets
+  val openBracket = P("[" ~ space)
+
+  // A parser for close brackets
+  val closeBracket = P(space ~ "]")
+
   // A parser for a parentized block
   def parenBlock[T](p: Parser[T]): Parser[Vector[T]] =
     openParen ~ p.rep(sep = ",").map(_.toVector) ~ closeParen
@@ -60,4 +66,7 @@ trait BasicParsers extends Helpers {
   def monospaced[T](p: Parser[T]): Parser[T] =
     P(oneSpaceAtLeast ~ p ~ oneSpaceAtLeast)
 
+  // A parser for a list of elements
+  def list[T](p: Parser[T]): Parser[List[T]] =
+    openBracket ~ (space ~ p ~ space).rep(sep = ",").map(_.toList) ~ closeBracket
 }

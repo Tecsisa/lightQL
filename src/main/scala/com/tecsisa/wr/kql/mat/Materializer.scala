@@ -6,8 +6,10 @@ import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
 import com.tecsisa.wr.kql.ast.{ ClauseTree, EqualityOperator => EqOp, LogicOperator }
 import com.tecsisa.wr.kql.ast.{ Query, MatchingOperator => MatchOp, NumericOperator => NumOp }
-import org.elasticsearch.index.query.QueryBuilders.{ boolQuery, matchQuery, termQuery, rangeQuery }
+import org.elasticsearch.index.query.QueryBuilders.{ boolQuery, matchQuery, rangeQuery }
+import org.elasticsearch.index.query.QueryBuilders.{ termQuery, termsQuery }
 import org.elasticsearch.index.query.{ BoolQueryBuilder, QueryBuilder }
+import scala.collection.JavaConverters.seqAsJavaListConverter
 
 trait Materializer[T] {
   def materialize(query: Query): T
@@ -46,8 +48,16 @@ object Materializer {
           ct match {
             case Clause(field, op, value) =>
               op match {
-                case EqOp.`=`   => termQuery(field, value)
-                case EqOp.!=    => boolQuery().mustNot(termQuery(field, value))
+                case EqOp.`=` =>
+                  value match {
+                    case list: List[_] => termsQuery(field, list.asJava)
+                    case _             => termQuery(field, value)
+                  }
+                case EqOp.!= =>
+                  value match {
+                    case list: List[_] => boolQuery().mustNot(termsQuery(field, list.asJava))
+                    case _             => boolQuery().mustNot(termQuery(field, value))
+                  }
                 case MatchOp.~  => matchQuery(field, value)
                 case MatchOp.!~ => boolQuery().mustNot(matchQuery(field, value))
                 case NumOp.<    => rangeQuery(field).lt(value)

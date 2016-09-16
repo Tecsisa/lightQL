@@ -13,8 +13,9 @@ import scala.annotation.tailrec
 
 case object ClauseTreeParse extends Parser[ClauseTree] with Operators with BasicParsers {
 
-  val field = P(charSeq.rep).!
-  val value = P(date | double | integer | quoted(CharPred(_ != '"').rep))
+  val element = P(date | double | integer | quoted(CharPred(_ != '"').rep))
+  val field   = P(charSeq.rep).!
+  val value   = P(list(element) | element)
   val clause = P(field ~ clauseOperator ~ value).map {
     case (f, op, v) => Clause(f, op, v)
   }
