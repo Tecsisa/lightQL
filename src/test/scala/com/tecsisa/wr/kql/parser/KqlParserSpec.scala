@@ -8,6 +8,8 @@ import com.tecsisa.wr.kql.ast.{ MatchingOperator => MatchOp }
 import com.tecsisa.wr.kql.ast.{ NumericOperator => NumOp }
 import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
 import com.tecsisa.wr.kql.ast.Query
+import org.joda.time.DateTimeZone.UTC
+import org.joda.time.DateTime
 import org.scalatest.WordSpec
 
 class KqlParserSpec extends WordSpec with QueryMatchers {
@@ -23,6 +25,19 @@ class KqlParserSpec extends WordSpec with QueryMatchers {
       "foo = 2.0000000000000002" should parseTo {
         Query(Clause("foo", EqOp.`=`, 2.0000000000000002))
       }
+    }
+    "parse: `foo = 2001-07-12`" in {
+      "foo = 2001-07-12" should parseTo {
+        Query(Clause("foo", EqOp.`=`, new DateTime(2001, 7, 12, 0, 0, 0, UTC)))
+      }
+    }
+    "parse: `foo = 2001-07-12T12:10:30.002+02:00`" in {
+      "foo = 2001-07-12T12:10:30.002+02:00" should parseTo {
+        Query(Clause("foo", EqOp.`=`, new DateTime(2001, 7, 12, 10, 10, 30, 2, UTC)))
+      }
+    }
+    "parse: `foo <= 25`" in {
+      "foo <= 25" should parseTo { Query(Clause("foo", NumOp.<=, 25)) }
     }
     "parse: `foo = \"foobar\"`" in {
       "foo = \"foobar\"" should parseTo { Query(Clause("foo", EqOp.`=`, "foobar")) }

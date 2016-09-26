@@ -10,6 +10,7 @@ class SearchSpec extends SearchBaseTest {
     "find exact results in queries with just a single clause" in {
       search in "songs" query q("composer = \"Johann Sebastian Bach\"") should haveTotalHits(1)
       search in "songs" query q("genre != \"Classical\"") should haveTotalHits(7)
+      search in "songs" query q("date = 2016-02-06") should haveTotalHits(1)
     }
     "not find exact results when the field is analyzed" in {
       search in "songs" query q("artist = \"Flaming Lips\"") should haveTotalHits(0)
@@ -84,12 +85,12 @@ class SearchSpec extends SearchBaseTest {
       search in "songs" query q1 should haveTotalHits(5)
       val q2 = q("year > 1967 and year <= 2002")
       search in "songs" query q2 should haveTotalHits(6)
-      val q3 = q("year >= 1967 and year <= 2002")
+      val q3 = q("price < 2.11 and price > 0.99")
       search in "songs" query q3 should haveTotalHits(7)
-      val q4 = q("price < 2.11 and price > 0.99")
-      search in "songs" query q4 should haveTotalHits(7)
-      val q5 = q("year >= 1985 and price > 1.99")
-      search in "songs" query q5 should haveTotalHits(1)
+      val q4 = q("year >= 1985 and price > 1.99")
+      search in "songs" query q4 should haveTotalHits(1)
+      val q5 = q("date <= 2016-01-01 and date >= 1975-10-06")
+      search in "songs" query q5 should haveTotalHits(5)
     }
   }
 

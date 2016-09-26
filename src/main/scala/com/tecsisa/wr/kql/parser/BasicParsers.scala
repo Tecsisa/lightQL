@@ -24,6 +24,15 @@ trait BasicParsers extends Helpers {
   // A parser for double numbers (IEEE 754 floating point)
   val double = P("-".? ~ integral ~ "." ~ integral.rep(min = 1, max = 16)).!.map(_.toDouble)
 
+  // A parser for dates (yyyy-MM-dd || yyyy-MM-ddTHH:mm:ss)
+  val dMHms      = P(CharIn('0' to '9').rep(min = 2, max = 2))
+  val year       = P(CharIn('0' to '9').rep(min = 4, max = 4))
+  val seconds    = P(dMHms ~ ("." ~ CharIn('0' to '9').rep(max = 3)).?)
+  val time       = P("T" ~ dMHms ~ ":" ~ dMHms ~ ":" ~ seconds)
+  val tz         = P((("-" | "+") ~ dMHms ~ ":" ~ dMHms) | "Z")
+  val dateFormat = P(year ~ "-" ~ dMHms ~ "-" ~ dMHms ~ time.? ~ tz.?)
+  val date       = dateFormat.!.map(parseDate)
+
   // A sequence of chars
   val charSeq = P(CharIn('a' to 'z', '0' to '9', "_-"))
 
