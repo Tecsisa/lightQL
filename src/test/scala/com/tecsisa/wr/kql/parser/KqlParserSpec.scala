@@ -42,6 +42,11 @@ class KqlParserSpec extends WordSpec with QueryMatchers {
     "parse: `foo = \"foobar\"`" in {
       "foo = \"foobar\"" should parseTo { Query(Clause("foo", EqOp.`=`, "foobar")) }
     }
+    "parse: `foo = [25, -2.4, \"foobar\"]`" in {
+      "foo = [25, -2.4, \"foobar\"]" should parseTo {
+        Query(Clause("foo", EqOp.`=`, List(25, -2.4, "foobar")))
+      }
+    }
     "parse: `foo != 25`" in {
       "foo != 25" should parseTo { Query(Clause("foo", EqOp.!=, 25)) }
     }

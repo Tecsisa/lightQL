@@ -12,6 +12,12 @@ class SearchSpec extends SearchBaseTest {
       search in "songs" query q("genre != \"Classical\"") should haveTotalHits(7)
       search in "songs" query q("date = 2016-02-06") should haveTotalHits(1)
     }
+    "find exact results in queries with multiple values" in {
+      search in "songs" query q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"]") should haveTotalHits(
+        2)
+      search in "songs" query q("genre != [\"Classical\", \"Jazz\"]") should haveTotalHits(5)
+      search in "songs" query q("price != [  1.29, 0.99 ]") should haveTotalHits(6)
+    }
     "not find exact results when the field is analyzed" in {
       search in "songs" query q("artist = \"Flaming Lips\"") should haveTotalHits(0)
       search in "songs" query q("artist != \"Flaming Lips\"") should haveTotalHits(10)
