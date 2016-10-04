@@ -2,13 +2,13 @@ package com.tecsisa.wr
 package kql
 package mat
 
-import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
-import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
-import com.tecsisa.wr.kql.ast.{ ClauseTree, EqualityOperator => EqOp, LogicOperator }
-import com.tecsisa.wr.kql.ast.{ Query, MatchingOperator => MatchOp, NumericOperator => NumOp }
-import org.elasticsearch.index.query.QueryBuilders.{ boolQuery, matchQuery, rangeQuery }
-import org.elasticsearch.index.query.QueryBuilders.{ termQuery, termsQuery }
-import org.elasticsearch.index.query.{ BoolQueryBuilder, QueryBuilder }
+import com.tecsisa.wr.kql.ast.ClauseTree.{Clause, CombinedClause}
+import com.tecsisa.wr.kql.ast.LogicOperator.{and, or}
+import com.tecsisa.wr.kql.ast.{ClauseTree, LogicOperator, EqualityOperator => EqOp}
+import com.tecsisa.wr.kql.ast.{Query, MatchingOperator => MatchOp, NumericOperator => NumOp}
+import org.elasticsearch.index.query.QueryBuilders.{boolQuery, termQuery, termsQuery}
+import org.elasticsearch.index.query.QueryBuilders.{matchQuery, nestedQuery, rangeQuery}
+import org.elasticsearch.index.query.{BoolQueryBuilder, QueryBuilder}
 import scala.collection.JavaConverters.seqAsJavaListConverter
 
 trait Materializer[T] {
@@ -16,27 +16,39 @@ trait Materializer[T] {
 }
 
 object Materializer {
+
+  def isNested(field: ClauseTree.Field): Boolean = field.contains(".")
+
+  def fieldPath(field: ClauseTree.Field): String =
+    field.dropRight(field.split("\\.").last.length + 1)
+
+  def nestQuery(qb: QueryBuilder, field: ClauseTree.Field): QueryBuilder =
+    if (isNested(field)) nestedQuery(fieldPath(field), qb) else qb
+
   implicit def elasticMaterializer: Materializer[QueryBuilder] =
     new Materializer[QueryBuilder] {
       def materialize(query: Query): QueryBuilder = {
         def loop(ct: ClauseTree, qb: BoolQueryBuilder): QueryBuilder = {
 
-          def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryBuilder): QueryBuilder =
+          def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryBuilder): QueryBuilder = {
             c.op match {
-              case EqOp.`=`   => qb.filter(termQuery(c.field, c.value))
-              case EqOp.!=    => qb.mustNot(termQuery(c.field, c.value))
-              case MatchOp.~  => qb.must(matchQuery(c.field, c.value))
-              case MatchOp.!~ => qb.mustNot(matchQuery(c.field, c.value))
-              case NumOp.<    => qb.filter(rangeQuery(c.field).lt(c.value))
-              case NumOp.<=   => qb.filter(rangeQuery(c.field).lte(c.value))
-              case NumOp.>    => qb.filter(rangeQuery(c.field).gt(c.value))
-              case NumOp.>=   => qb.filter(rangeQuery(c.field).gte(c.value))
+              case EqOp.`=`   => qb.filter(nestQuery(termQuery(c.field, c.value), c.field))
+              case EqOp.!=    => qb.mustNot(nestQuery(termQuery(c.field, c.value), c.field))
+              case MatchOp.~  => qb.must(nestQuery(matchQuery(c.field, c.value), c.field))
+              case MatchOp.!~ => qb.mustNot(nestQuery(matchQuery(c.field, c.value), c.field))
+              case NumOp.<    => qb.filter(nestQuery(rangeQuery(c.field).lt(c.value), c.field))
+              case NumOp.<=   => qb.filter(nestQuery(rangeQuery(c.field).lte(c.value), c.field))
+              case NumOp.>    => qb.filter(nestQuery(rangeQuery(c.field).gt(c.value), c.field))
+              case NumOp.>=   => qb.filter(nestQuery(rangeQuery(c.field).gte(c.value), c.field))
+              case _          => qb
             }
+          }
 
-          def buildQueryFromCombinedAndClause[V](qb: BoolQueryBuilder,
-                                                 lop: LogicOperator,
-                                                 ct: ClauseTree,
-                                                 c: Clause[V]) = lop match {
+          def buildQueryFromCombinedAndClause[V](
+              qb: BoolQueryBuilder,
+              lop: LogicOperator,
+              ct: ClauseTree,
+              c: Clause[V]) = lop match {
             case `and` =>
               qb.must(loop(ct, boolQuery()))
               buildQueryFromClause(c, qb)
@@ -47,7 +59,7 @@ object Materializer {
 
           ct match {
             case Clause(field, op, value) =>
-              op match {
+              val query = op match {
                 case EqOp.`=` =>
                   value match {
                     case list: List[_] => termsQuery(field, list.asJava)
@@ -64,6 +76,12 @@ object Materializer {
                 case NumOp.<=   => rangeQuery(field).lte(value)
                 case NumOp.>    => rangeQuery(field).gt(value)
                 case NumOp.>=   => rangeQuery(field).gte(value)
+                case _          => sys.error("Impossible")
+              }
+              isNested(field) match {
+                case true =>
+                  nestedQuery(fieldPath(field), query)
+                case _ => query
               }
             case CombinedClause(lct, lop, rct) =>
               (lct, rct) match {

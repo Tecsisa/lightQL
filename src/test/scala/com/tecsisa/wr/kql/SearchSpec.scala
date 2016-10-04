@@ -10,7 +10,8 @@ class SearchSpec extends SearchBaseTest {
     "find exact results in queries with just a single clause" in {
       search in "songs" query q("composer = \"Johann Sebastian Bach\"") should haveTotalHits(1)
       search in "songs" query q("genre != \"Classical\"") should haveTotalHits(7)
-      search in "songs" query q("date = 2016-02-06") should haveTotalHits(1)
+      search in "songs" query q("date.full = 2016-02-06") should haveTotalHits(1)
+      search in "songs" query q("stats.rate.stars = 5.0") should haveTotalHits(2)
     }
     "find exact results in queries with multiple values" in {
       search in "songs" query q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"]") should haveTotalHits(
@@ -46,6 +47,8 @@ class SearchSpec extends SearchBaseTest {
       search in "songs" query q6 should haveTotalHits(8)
       val q7 = q("composer != \"Johann Sebastian Bach\" or composer != \"Patrick Leonard\"")
       search in "songs" query q7 should haveTotalHits(10)
+      val q8 = q("stats.rate.stars = 4.5 or stats.rate.stars = 3.5")
+      search in "songs" query q8 should haveTotalHits(3)
     }
     "match results in queries with a combined clause" in {
       val q1 = q("name ~ \"paranoid\" and artist ~ \"radiohead\"")
@@ -63,40 +66,44 @@ class SearchSpec extends SearchBaseTest {
     }
     "find exact results in unbalanced queries" in {
       val q1 = q(
-        "composer = \"Johann Sebastian Bach\" and genre = \"Classical\" and year = 1955 and price = 0.99")
+        "composer = \"Johann Sebastian Bach\" and genre = \"Classical\" and date.year = 1955 and price = 0.99")
       search in "songs" query q1 should haveTotalHits(1)
       val q2 =
-        q("composer = \"Johann Sebastian Bach\" and (genre = \"Classical\" and year = 1955)")
+        q("composer = \"Johann Sebastian Bach\" and (genre = \"Classical\" and date.year = 1955)")
       search in "songs" query q2 should haveTotalHits(1)
     }
     "find exact results in balanced queries" in {
       val q1 = q {
         "(composer = \"Johann Sebastian Bach\" and genre = \"Classical\") and " +
-          "(year = 1955 or year = 1956)"
+          "(date.year = 1955 or date.year = 1956)"
       }
       search in "songs" query q1 should haveTotalHits(1)
     }
     "find range results in queries with just a single clause" in {
-      val q1 = q("year <= 1955")
+      val q1 = q("date.year <= 1955")
       search in "songs" query q1 should haveTotalHits(1)
-      val q2 = q("year >= 1955")
+      val q2 = q("date.year >= 1955")
       search in "songs" query q2 should haveTotalHits(10)
-      val q3 = q("year > 1955")
+      val q3 = q("date.year > 1955")
       search in "songs" query q3 should haveTotalHits(9)
-      val q4 = q("year < 1955")
+      val q4 = q("date.year < 1955")
       search in "songs" query q4 should haveTotalHits(0)
+      val q5 = q("stats.rate.stars > 2.75")
+      search in "songs" query q5 should haveTotalHits(8)
     }
     "find range results in queries with a combined clause" in {
-      val q1 = q("year >= 1967 and year < 2002")
+      val q1 = q("date.year >= 1967 and date.year < 2002")
       search in "songs" query q1 should haveTotalHits(5)
-      val q2 = q("year > 1967 and year <= 2002")
+      val q2 = q("date.year > 1967 and date.year <= 2002")
       search in "songs" query q2 should haveTotalHits(6)
       val q3 = q("price < 2.11 and price > 0.99")
       search in "songs" query q3 should haveTotalHits(7)
-      val q4 = q("year >= 1985 and price > 1.99")
+      val q4 = q("date.year >= 1985 and price > 1.99")
       search in "songs" query q4 should haveTotalHits(1)
-      val q5 = q("date <= 2016-01-01 and date >= 1975-10-06")
+      val q5 = q("date.full <= 2016-01-01 and date.full >= 1975-10-06")
       search in "songs" query q5 should haveTotalHits(5)
+      val q6 = q("price > 0.99 and stats.rate.stars < 4.5 and date.year >= 2000")
+      search in "songs" query q6 should haveTotalHits(3)
     }
   }
 
