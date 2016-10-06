@@ -1,4 +1,0 @@
-# scalafmt configuration.
---style defaultWithAlign
---maxColumn 100
---spacesInImportCurlyBraces true

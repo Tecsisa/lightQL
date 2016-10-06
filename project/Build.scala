@@ -31,7 +31,7 @@ object Build extends AutoPlugin {
     unmanagedSourceDirectories.in(Compile) := Vector(scalaSource.in(Compile).value),
     unmanagedSourceDirectories.in(Test) := Vector(scalaSource.in(Test).value),
     // Scalafmt settings
-    ScalaFmtPlugin.autoImport.scalafmtConfig := Some(file(".scalafmt")),
+    ScalaFmtPlugin.autoImport.scalafmtConfig := Some(file(".scalafmt.conf")),
     // Git settings
     GitPlugin.autoImport.git.useGitDescribe := true
   )

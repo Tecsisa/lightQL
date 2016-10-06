@@ -2,13 +2,13 @@ package com.tecsisa.wr
 package kql
 package mat
 
-import com.tecsisa.wr.kql.ast.ClauseTree.{Clause, CombinedClause}
-import com.tecsisa.wr.kql.ast.LogicOperator.{and, or}
-import com.tecsisa.wr.kql.ast.{ClauseTree, LogicOperator, EqualityOperator => EqOp}
-import com.tecsisa.wr.kql.ast.{Query, MatchingOperator => MatchOp, NumericOperator => NumOp}
-import org.elasticsearch.index.query.QueryBuilders.{boolQuery, termQuery, termsQuery}
-import org.elasticsearch.index.query.QueryBuilders.{matchQuery, nestedQuery, rangeQuery}
-import org.elasticsearch.index.query.{BoolQueryBuilder, QueryBuilder}
+import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
+import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
+import com.tecsisa.wr.kql.ast.{ ClauseTree, LogicOperator, EqualityOperator => EqOp }
+import com.tecsisa.wr.kql.ast.{ Query, MatchingOperator => MatchOp, NumericOperator => NumOp }
+import org.elasticsearch.index.query.QueryBuilders.{ boolQuery, termQuery, termsQuery }
+import org.elasticsearch.index.query.QueryBuilders.{ matchQuery, nestedQuery, rangeQuery }
+import org.elasticsearch.index.query.{ BoolQueryBuilder, QueryBuilder }
 import scala.collection.JavaConverters.seqAsJavaListConverter
 
 trait Materializer[T] {
@@ -48,7 +48,8 @@ object Materializer {
               qb: BoolQueryBuilder,
               lop: LogicOperator,
               ct: ClauseTree,
-              c: Clause[V]) = lop match {
+              c: Clause[V]
+          ) = lop match {
             case `and` =>
               qb.must(loop(ct, boolQuery()))
               buildQueryFromClause(c, qb)
