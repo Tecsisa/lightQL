@@ -1,4 +1,4 @@
-lazy val `wr-kql` = project.copy(id = "wr-kql").in(file("."))
+lazy val `wr-kql` = project.copy(id = "wr-kql").in(file(".")).enablePlugins(GitVersioning)
 
 name := "wr-kql"
 
