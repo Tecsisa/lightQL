@@ -9,8 +9,8 @@ import org.scalatest.matchers.{ MatchResult, Matcher }
 
 trait QueryMatchers extends Matchers {
 
-  type Success = fastparse.core.Parsed.Success[Query]
-  type Failure = fastparse.core.Parsed.Failure
+  type Success = fastparse.core.Parsed.Success[Query, _, _]
+  type Failure = fastparse.core.Parsed.Failure[_, _]
 
   def parseTo(query: Query): Matcher[String] = new Matcher[String] {
     override def apply(left: String): MatchResult = {
