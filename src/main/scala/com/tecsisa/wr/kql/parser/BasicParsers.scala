@@ -34,7 +34,7 @@ trait BasicParsers extends Helpers {
   val date       = dateFormat.!.map(parseDate)
 
   // A sequence of chars
-  val charSeq = P(CharIn('a' to 'z', '0' to '9', "_-"))
+  val charSeq = P(CharIn('A' to 'Z', 'a' to 'z', '0' to '9', "_-"))
 
   // A parser for open parens
   val openParen = P("(" ~ space)
