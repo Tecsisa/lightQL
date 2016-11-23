@@ -1,14 +1,21 @@
 package com.tecsisa.wr
 package kql
 package mat
+package elastic
 
 import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
-import com.tecsisa.wr.kql.ast.{ ClauseTree, LogicOperator, EqualityOperator => EqOp }
-import com.tecsisa.wr.kql.ast.{ Query, MatchingOperator => MatchOp, NumericOperator => NumOp }
-import org.elasticsearch.index.query.QueryBuilders.{ boolQuery, termQuery, termsQuery }
-import org.elasticsearch.index.query.QueryBuilders.{ matchQuery, nestedQuery, rangeQuery }
+import com.tecsisa.wr.kql.ast.{
+  ClauseTree,
+  LogicOperator,
+  Query,
+  EqualityOperator => EqOp,
+  MatchingOperator => MatchOp,
+  NumericOperator => NumOp
+}
+import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.index.query.{ BoolQueryBuilder, QueryBuilder }
+
 import scala.collection.JavaConverters.seqAsJavaListConverter
 
 trait Materializer[T] {
@@ -30,7 +37,7 @@ object Materializer {
       def materialize(query: Query): QueryBuilder = {
         def loop(ct: ClauseTree, qb: BoolQueryBuilder): QueryBuilder = {
 
-          def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryBuilder): QueryBuilder = {
+          def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryBuilder): QueryBuilder =
             c.op match {
               case EqOp.`=`   => qb.filter(nestQuery(termQuery(c.field, c.value), c.field))
               case EqOp.!=    => qb.mustNot(nestQuery(termQuery(c.field, c.value), c.field))
@@ -42,7 +49,6 @@ object Materializer {
               case NumOp.>=   => qb.filter(nestQuery(rangeQuery(c.field).gte(c.value), c.field))
               case _          => qb
             }
-          }
 
           def buildQueryFromCombinedAndClause[V](
               qb: BoolQueryBuilder,
@@ -105,7 +111,7 @@ object Materializer {
                   }
               } // combined clause pattern matching
           } // main pattern matching
-        }   // loop
+        } // loop
         loop(query.ct, boolQuery())
       }
     } // Materializer

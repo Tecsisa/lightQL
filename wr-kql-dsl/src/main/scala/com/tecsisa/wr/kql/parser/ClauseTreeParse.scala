@@ -106,7 +106,7 @@ case object ClauseTreeParse extends StringParser[ClauseTree] with Operators with
                   current()
               }
           } // logicOperator parsing
-        }   // loop
+        } // loop
         loop(atom.value, atom.index, atom.traceParsers, atom.cut, dep)
       case (f: StringMutableFailure, dep) =>
         (failMore(f, index, cfg.logDepth), dep)

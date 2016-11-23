@@ -1,8 +1,9 @@
 package com.tecsisa.wr
 package kql
+package mat
+package elastic
 
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.tecsisa.wr.kql.mat._
 
 class SearchSpec extends SearchBaseTest {
 
