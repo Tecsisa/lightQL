@@ -13,9 +13,9 @@ import com.tecsisa.wr.kql.ast.{
   MatchingOperator => MatchOp,
   NumericOperator => NumOp
 }
+import org.apache.lucene.search.join.ScoreMode
 import org.elasticsearch.index.query.QueryBuilders._
 import org.elasticsearch.index.query.{ BoolQueryBuilder, QueryBuilder }
-
 import scala.collection.JavaConverters.seqAsJavaListConverter
 
 trait Materializer[T] {
@@ -30,7 +30,7 @@ object Materializer {
     field.dropRight(field.split("\\.").last.length + 1)
 
   def nestQuery(qb: QueryBuilder, field: ClauseTree.Field): QueryBuilder =
-    if (isNested(field)) nestedQuery(fieldPath(field), qb) else qb
+    if (isNested(field)) nestedQuery(fieldPath(field), qb, ScoreMode.None) else qb
 
   implicit def elasticMaterializer: Materializer[QueryBuilder] =
     new Materializer[QueryBuilder] {
@@ -87,13 +87,15 @@ object Materializer {
               }
               isNested(field) match {
                 case true =>
-                  nestedQuery(fieldPath(field), query)
+                  nestedQuery(fieldPath(field), query, ScoreMode.None)
                 case _ => query
               }
             case CombinedClause(lct, lop, rct) =>
               (lct, rct) match {
                 case (_: CombinedClause, _: CombinedClause) =>
-                  val f = lop match { case `and` => qb.must _; case `or` => qb.should _ }
+                  def f(q: QueryBuilder) = lop match {
+                    case `and` => qb.must(q); case `or` => qb.should(q)
+                  }
                   Seq(lct, rct).foreach(x => f(loop(x, boolQuery())))
                   qb
                 case (_: CombinedClause, c @ Clause(_, _, _)) =>
