@@ -17,7 +17,7 @@ trait QueryMatchers extends Matchers {
       val parsed = KqlParser().parse(left)
       val (msg, passes) = parsed match {
         case Success(v, _)  => (s"but parsed to $v", parsed.get.value == query)
-        case error: Failure => (s"with failure: ${ error.msg }", false)
+        case error: Failure => (s"with failure: ${error.msg}", false)
       }
       MatchResult(
         passes,

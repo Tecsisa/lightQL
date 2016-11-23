@@ -1,8 +1,10 @@
 package com.tecsisa.wr
 package kql
+package mat
+package elastic
 
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.mappings.FieldType.{ DoubleType, IntegerType, StringType, DateType }
+import com.sksamuel.elastic4s.mappings.FieldType.{ DateType, DoubleType, IntegerType, StringType }
 import com.sksamuel.elastic4s.testkit.{ ElasticMatchers, ElasticSugar }
 import com.tecsisa.wr.kql.ast.Query
 import com.tecsisa.wr.kql.parser.KqlParser
