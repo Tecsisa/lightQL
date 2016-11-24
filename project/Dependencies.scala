@@ -6,7 +6,7 @@ object Version {
   final val FastParse           = "0.4.1"
   final val Elastic4s           = "2.4.0"
   final val NscalaTime          = "2.14.0"
-  final val Dsl                 = "0.1.0"
+  final val Dsl                 = "0.1.1-SNAPSHOT"
   final val ElasticMaterializer = s"$Elastic4s-SNAPSHOT"
 }
 
