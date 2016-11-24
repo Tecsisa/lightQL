@@ -6,7 +6,7 @@ import fastparse.all._
 import com.tecsisa.wr.kql.ast.EqualityOperator
 import com.tecsisa.wr.kql.ast.MatchingOperator
 import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
-import com.tecsisa.wr.kql.ast.NumericOperator.{ >, >=, <, <= }
+import com.tecsisa.wr.kql.ast.NumericOperator.{ <, <=, >, >= }
 
 trait Operators extends BasicParsers {
   val eqOperator = P("=" | "!=").!.map {
