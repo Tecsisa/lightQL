@@ -3,8 +3,7 @@ package kql
 package mat
 package elastic
 
-import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.mappings.FieldType.{ DateType, DoubleType, IntegerType, StringType }
+import com.sksamuel.elastic4s.analyzers.KeywordAnalyzer
 import com.sksamuel.elastic4s.testkit.{ ElasticMatchers, ElasticSugar }
 import com.tecsisa.wr.kql.ast.Query
 import com.tecsisa.wr.kql.parser.KqlParser
@@ -14,21 +13,19 @@ import org.scalatest.concurrent.Eventually
 trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with ElasticMatchers {
 
   client.execute {
-    create index "songs" mappings (
+    createIndex("songs") mappings (
       mapping("song") fields (
-        field("name") typed StringType,
-        field("artist") typed StringType,
-        field("composer") typed StringType index "not_analyzed",
-        field("genre") typed StringType index "not_analyzed",
+        textField("name"),
+        textField("artist"),
+        textField("composer") analyzer KeywordAnalyzer,
+        textField("genre") analyzer KeywordAnalyzer,
         nestedField("date") as (
-          field("full") typed DateType,
-          field("year") typed IntegerType
+          dateField("full"),
+          intField("year")
         ),
-        field("price") typed DoubleType,
+        doubleField("price"),
         nestedField("stats") as (
-          nestedField("rate") as (
-            field("stars") typed DoubleType
-          )
+          nestedField("rate") as doubleField("stars")
         )
       )
     )
@@ -36,7 +33,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
 
   client.execute {
     bulk(
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "Paranoid Android",
         "artist"   -> "Radiohead",
         "composer" -> "Radiohead",
@@ -45,7 +42,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 1.26,
         "stats"    -> Map("rate" -> Map("stars" -> 4.5))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "Sinfonía núm. 1 en Do mayor, Op. 21. I Adagio molto - Allegro con brio",
         "artist"   -> "Simon Rattle // Berliner Philharmoniker",
         "composer" -> "Ludwig van Beethoven",
@@ -55,7 +52,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 2.45,
         "stats"    -> Map("rate" -> Map("stars" -> 3.5))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "So What",
         "artist"   -> "Miles Davis",
         "composer" -> "Miles Davis",
@@ -64,7 +61,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 1.99,
         "stats"    -> Map("rate" -> Map("stars" -> 5.0))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "La Isla Bonita",
         "artist"   -> "Madonna",
         "composer" -> "Patrick Leonard",
@@ -73,7 +70,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 1.29,
         "stats"    -> Map("rate" -> Map("stars" -> 2.75))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "Symphony No.8 in E flat - \"Symphony of a Thousand\" Part One: Hymnus",
         "artist"   -> "Georg Solti // Chicago Symphony Orchestra",
         "composer" -> "Gustav Mahler",
@@ -82,7 +79,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 2.11,
         "stats"    -> Map("rate" -> Map("stars" -> 3.25))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "Do You Realize??",
         "artist"   -> "Flaming Lips",
         "composer" -> "Wayne Coyne",
@@ -91,7 +88,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 1.29,
         "stats"    -> Map("rate" -> Map("stars" -> 4.25))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "Don't Know Why",
         "artist"   -> "Norah Jones",
         "composer" -> "Jesse Harris",
@@ -100,7 +97,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 1.19,
         "stats"    -> Map("rate" -> Map("stars" -> 1.5))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "Goldberg Variations: Aria",
         "artist"   -> "Glenn Gould",
         "composer" -> "Johann Sebastian Bach",
@@ -109,7 +106,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 0.99,
         "stats"    -> Map("rate" -> Map("stars" -> 3.0))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "Money For Nothing",
         "artist"   -> "Dire Straits",
         "composer" -> "Mark Knopfler",
@@ -118,7 +115,7 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         "price"    -> 1.29,
         "stats"    -> Map("rate" -> Map("stars" -> 3.5))
       ),
-      index into "songs/song" fields (
+      indexInto("songs/song") fields (
         "name"     -> "Smell Like Teen Spirit",
         "artist"   -> "Nirvana",
         "composer" -> "Nirvana",

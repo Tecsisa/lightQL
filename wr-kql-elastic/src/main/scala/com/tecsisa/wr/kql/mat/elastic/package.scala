@@ -2,7 +2,7 @@ package com.tecsisa.wr
 package kql
 package mat
 
-import com.sksamuel.elastic4s.SearchDefinition
+import com.sksamuel.elastic4s.searches.SearchDefinition
 import com.tecsisa.wr.kql.ast.Query
 import org.elasticsearch.index.query.QueryBuilder
 
