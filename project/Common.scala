@@ -11,7 +11,7 @@ object Common extends AutoPlugin {
   override def trigger = allRequirements
 
   override def projectSettings = reformatOnCompileSettings ++ Seq(
-    organization := "com.tecsisa.wr",
+    organization := "com.tecsisa",
     organizationName := "Tecnología, Sistemas y Aplicaciones S.L.",
     organizationHomepage := Some(url("http://www.tecsisa.com/")),
     scalaVersion := Version.Scala,
