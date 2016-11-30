@@ -1,9 +1,8 @@
-package com.tecsisa.wr
-package kql
+package com.tecsisa.lightql
 package mat
 
 import com.sksamuel.elastic4s.SearchDefinition
-import com.tecsisa.wr.kql.ast.Query
+import com.tecsisa.lightql.ast.Query
 import org.elasticsearch.index.query.QueryBuilder
 
 package object elastic {

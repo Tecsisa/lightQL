@@ -1,7 +1,4 @@
-package com.tecsisa.wr
-package kql
-package mat
-package elastic
+package com.tecsisa.lightql.mat.elastic
 
 import com.sksamuel.elastic4s.ElasticDsl._
 

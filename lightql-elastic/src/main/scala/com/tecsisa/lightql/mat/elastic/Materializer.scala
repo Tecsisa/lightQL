@@ -1,11 +1,10 @@
-package com.tecsisa.wr
-package kql
+package com.tecsisa.lightql
 package mat
 package elastic
 
-import com.tecsisa.wr.kql.ast.ClauseTree.{ Clause, CombinedClause }
-import com.tecsisa.wr.kql.ast.LogicOperator.{ and, or }
-import com.tecsisa.wr.kql.ast.{
+import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
+import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
+import com.tecsisa.lightql.ast.{
   ClauseTree,
   LogicOperator,
   Query,

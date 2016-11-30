@@ -1,13 +1,12 @@
-package com.tecsisa.wr
-package kql
+package com.tecsisa.lightql
 package mat
 package elastic
 
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.mappings.FieldType.{ DateType, DoubleType, IntegerType, StringType }
 import com.sksamuel.elastic4s.testkit.{ ElasticMatchers, ElasticSugar }
-import com.tecsisa.wr.kql.ast.Query
-import com.tecsisa.wr.kql.parser.KqlParser
+import com.tecsisa.lightql.ast.Query
+import com.tecsisa.lightql.parser.LightqlParser
 import org.scalatest.WordSpec
 import org.scalatest.concurrent.Eventually
 
@@ -133,6 +132,6 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
   refresh("songs")
   blockUntilCount(10, "songs")
 
-  protected def q(qs: String): Query = KqlParser().parse(qs).get.value
+  protected def q(qs: String): Query = LightqlParser().parse(qs).get.value
 
 }

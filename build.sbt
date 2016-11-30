@@ -1,16 +1,16 @@
-lazy val `wr-kql` = project
+lazy val lightql = project
   .in(file("."))
   .enablePlugins(NoPublish, GitVersioning)
   .aggregate(elastic)
 
 lazy val elastic = project
-  .in(file("wr-kql-elastic"))
+  .in(file("lightql-elastic"))
   .enablePlugins(GitVersioning)
   .settings(
-    name := "wr-kql-elastic",
+    name := "lightql-elastic",
     version := Version.ElasticMaterializer,
     libraryDependencies ++= Seq(
-      "com.tecsisa.wr" %% "wr-kql-dsl" % Version.Dsl,
+      "com.tecsisa" %% "lightql-dsl" % Version.Dsl,
       Library.elastic4s,
       Library.elastic4sTestkit % Test
     )
