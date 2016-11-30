@@ -28,8 +28,8 @@ object Common extends AutoPlugin {
 
     licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
 
-    scalaVersion := Version.Scala,
-    crossScalaVersions := Seq(scalaVersion.value),
+    scalaVersion := crossScalaVersions.value.head,
+    crossScalaVersions := Version.ScalaVersions,
     crossVersion := CrossVersion.binary,
 
     scalacOptions ++= Seq(
