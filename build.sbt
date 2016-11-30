@@ -1,6 +1,6 @@
 lazy val lightql = project
   .in(file("."))
-  .enablePlugins(NoPublish, GitVersioning)
+  .enablePlugins(NoPublish, GitVersioning, AutomateHeaderPlugin)
   .aggregate(dsl, elastic)
 
 lazy val `docs` = project
@@ -21,7 +21,7 @@ lazy val micrositeSettings = Seq(
 
 lazy val dsl = project
   .in(file("lightql-dsl"))
-  .enablePlugins(GitVersioning)
+  .enablePlugins(GitVersioning, AutomateHeaderPlugin)
   .settings(
     name := "lightql-dsl",
     version := Version.Dsl,
@@ -37,7 +37,7 @@ lazy val dsl = project
 
 lazy val elastic = project
   .in(file("lightql-elastic"))
-  .enablePlugins(GitVersioning)
+  .enablePlugins(GitVersioning, AutomateHeaderPlugin)
   .settings(
     name := "lightql-elastic",
     version := Version.ElasticMaterializer,
