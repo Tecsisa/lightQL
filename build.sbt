@@ -3,6 +3,22 @@ lazy val `wr-kql` = project
   .enablePlugins(NoPublish, GitVersioning)
   .aggregate(dsl, elastic)
 
+lazy val `docs` = project
+  .enablePlugins(MicrositesPlugin)
+  .settings(micrositeSettings)
+
+lazy val micrositeSettings = Seq(
+  micrositeName := "wr-kql",
+  micrositeDescription := "Easy query language for Elasticsearch",
+  micrositeBaseUrl := "wr-kql",
+  micrositeDocumentationUrl := "/wr-kql/docs/",
+  micrositeAuthor := "Tecsisa",
+  micrositeHomepage := "http://www.tecsisa.com",
+  micrositeExtraMdFiles := Map(file("CONTRIBUTING.md") -> "contributing.md", file("README.md") -> "index.md"),
+  micrositeGithubOwner := "Tecsisa",
+  micrositeGithubRepo := "kql"
+)
+
 lazy val dsl = project
   .in(file("wr-kql-dsl"))
   .enablePlugins(GitVersioning)
