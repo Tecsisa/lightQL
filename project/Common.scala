@@ -1,12 +1,20 @@
 import sbt._
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
+import de.heikoseeberger.sbtheader._
+import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import com.typesafe.sbt.GitPlugin
 import org.scalafmt.sbt.ScalaFmtPlugin.autoImport._
 
 object Common extends AutoPlugin {
 
-  override def requires = JvmPlugin && GitPlugin
+  final val FileHeader = (HeaderPattern.cStyleBlockComment,
+    """|/*
+       | * Copyright (C) 2016 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
+       | */
+       | """.stripMargin)
+
+  override def requires = JvmPlugin && GitPlugin && HeaderPlugin
 
   override def trigger = allRequirements
 
@@ -14,8 +22,16 @@ object Common extends AutoPlugin {
     organization := "com.tecsisa",
     organizationName := "Tecnología, Sistemas y Aplicaciones S.L.",
     organizationHomepage := Some(url("http://www.tecsisa.com/")),
+    homepage := Some(url("https://github.com/Tecsisa/lightQL")),
+    scmInfo := Some(ScmInfo(url("https://github.com/Tecsisa/lightQL"), "git@github.com:Tecsisa/lightQL.git")),
+    developers += Developer("contributors", "Contributors", "", url("https://github.com/Tecsisa/lightQL/graphs/contributors")),
+
+    licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
+
     scalaVersion := Version.Scala,
     crossScalaVersions := Seq(scalaVersion.value),
+    crossVersion := CrossVersion.binary,
+
     scalacOptions ++= Seq(
       "-encoding", "UTF-8",
       "-unchecked",
@@ -33,6 +49,8 @@ object Common extends AutoPlugin {
 
     // show full stack traces and test case durations
     testOptions in Test += Tests.Argument("-oDF"),
+
+    headers := headers.value ++ Map("scala" -> FileHeader),
 
     // @see
     // http://stackoverflow.com/questions/26940253/in-sbt-how-do-you-override-scalacoptions-for-console-in-all-configurations

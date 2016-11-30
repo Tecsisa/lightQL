@@ -1,11 +1,11 @@
 lazy val lightql = project
   .in(file("."))
-  .enablePlugins(NoPublish, GitVersioning)
+  .enablePlugins(NoPublish, GitVersioning, AutomateHeaderPlugin)
   .aggregate(elastic)
 
 lazy val elastic = project
   .in(file("lightql-elastic"))
-  .enablePlugins(GitVersioning)
+  .enablePlugins(GitVersioning, AutomateHeaderPlugin)
   .settings(
     name := "lightql-elastic",
     version := Version.ElasticMaterializer,

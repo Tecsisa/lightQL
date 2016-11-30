@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2016 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
+ */
 package com.tecsisa.lightql.mat.elastic
 
 import com.sksamuel.elastic4s.ElasticDsl._
