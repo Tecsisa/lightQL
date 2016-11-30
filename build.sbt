@@ -1,4 +1,4 @@
-lazy val `wr-kql` = project
+lazy val lightql = project
   .in(file("."))
   .enablePlugins(NoPublish, GitVersioning)
   .aggregate(dsl, elastic)
@@ -8,38 +8,38 @@ lazy val `docs` = project
   .settings(micrositeSettings)
 
 lazy val micrositeSettings = Seq(
-  micrositeName := "wr-kql",
+  micrositeName := "lightql",
   micrositeDescription := "Easy query language for Elasticsearch",
-  micrositeBaseUrl := "wr-kql",
-  micrositeDocumentationUrl := "/wr-kql/docs/",
+  micrositeBaseUrl := "lightql",
+  micrositeDocumentationUrl := "/lightql/docs/",
   micrositeAuthor := "Tecsisa",
   micrositeHomepage := "http://www.tecsisa.com",
   micrositeExtraMdFiles := Map(file("CONTRIBUTING.md") -> "contributing.md", file("README.md") -> "index.md"),
   micrositeGithubOwner := "Tecsisa",
-  micrositeGithubRepo := "kql"
+  micrositeGithubRepo := "lightql"
 )
 
 lazy val dsl = project
-  .in(file("wr-kql-dsl"))
+  .in(file("lightql-dsl"))
   .enablePlugins(GitVersioning)
   .settings(
-    name := "wr-kql-dsl",
+    name := "lightql-dsl",
     version := Version.Dsl,
     libraryDependencies ++= Seq(
       Library.fastParse,
       Library.nscalaTime,
       Library.scalaTest % Test
     ),
-    initialCommands := """|import com.tecsisa.wr.kql.parser.KqlParser._
-                          |import com.tecsisa.wr.kql.ast.ClauseTree._
+    initialCommands := """|import com.tecsisa.lightql.parser.LightqlParser._
+                          |import com.tecsisa.lightql.ast.ClauseTree._
                           |""".stripMargin
   )
 
 lazy val elastic = project
-  .in(file("wr-kql-elastic"))
+  .in(file("lightql-elastic"))
   .enablePlugins(GitVersioning)
   .settings(
-    name := "wr-kql-elastic",
+    name := "lightql-elastic",
     version := Version.ElasticMaterializer,
     libraryDependencies ++= Seq(
       Library.elastic4s,
