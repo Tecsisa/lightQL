@@ -5,6 +5,8 @@ import de.heikoseeberger.sbtheader._
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import com.typesafe.sbt.GitPlugin
 import org.scalafmt.sbt.ScalaFmtPlugin.autoImport._
+import bintray.BintrayPlugin
+import bintray.BintrayPlugin.autoImport._
 
 object Common extends AutoPlugin {
 
@@ -14,7 +16,7 @@ object Common extends AutoPlugin {
        | */
        | """.stripMargin)
 
-  override def requires = JvmPlugin && GitPlugin && HeaderPlugin
+  override def requires = JvmPlugin && GitPlugin && HeaderPlugin && BintrayPlugin
 
   override def trigger = allRequirements
 
@@ -25,11 +27,11 @@ object Common extends AutoPlugin {
     homepage := Some(url("https://github.com/Tecsisa/lightQL")),
     scmInfo := Some(ScmInfo(url("https://github.com/Tecsisa/lightQL"), "git@github.com:Tecsisa/lightQL.git")),
     developers += Developer("contributors", "Contributors", "", url("https://github.com/Tecsisa/lightQL/graphs/contributors")),
-
+    pomIncludeRepository := (_ => false),
     licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
 
-    scalaVersion := Version.Scala,
-    crossScalaVersions := Seq(scalaVersion.value),
+    scalaVersion := crossScalaVersions.value.head,
+    crossScalaVersions := Version.ScalaVersions,
     crossVersion := CrossVersion.binary,
 
     scalacOptions ++= Seq(
@@ -51,6 +53,13 @@ object Common extends AutoPlugin {
     testOptions in Test += Tests.Argument("-oDF"),
 
     headers := headers.value ++ Map("scala" -> FileHeader),
+
+    // Bintray settings
+    bintrayPackage := "lightQL",
+    bintrayOrganization := Some("tecsisa"),
+    bintrayRepository := "maven-bintray-repo",
+
+    resolvers += Resolver.bintrayRepo("tecsisa", "maven-bintray-repo"), // remove after maven central sync
 
     // @see
     // http://stackoverflow.com/questions/26940253/in-sbt-how-do-you-override-scalacoptions-for-console-in-all-configurations
