@@ -16,7 +16,7 @@ object Common extends AutoPlugin {
        | */
        | """.stripMargin)
 
-  override def requires = JvmPlugin && GitPlugin && HeaderPlugin && BintrayPlugin
+  override def requires = JvmPlugin && GitPlugin && HeaderPlugin
 
   override def trigger = allRequirements
 
@@ -53,11 +53,6 @@ object Common extends AutoPlugin {
     testOptions in Test += Tests.Argument("-oDF"),
 
     headers := headers.value ++ Map("scala" -> FileHeader),
-
-    // Bintray settings
-    bintrayPackage := "lightQL",
-    bintrayOrganization := Some("tecsisa"),
-    bintrayRepository := "maven-bintray-repo",
 
     // @see
     // http://stackoverflow.com/questions/26940253/in-sbt-how-do-you-override-scalacoptions-for-console-in-all-configurations
