@@ -1,0 +1,1 @@
+[api]: https://tecsisa.github.io/lightql/api/

@@ -1,6 +1,7 @@
 ---
 layout: docs
-title: Types
+title: "Types"
+position: 1
 ---
 
 # Types

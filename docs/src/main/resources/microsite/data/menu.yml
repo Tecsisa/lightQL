@@ -1,9 +1,10 @@
 options:
-  - title: Usage
-    url: docs/index.html
 
   - title: Types
-    url: docs/types.html
+    url: types.html
 
   - title: Supported queries
-    url: docs/supported.html
+    url: supported.html
+
+  - title: Contributing
+    url: contributing.html

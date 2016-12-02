@@ -1,3 +1,6 @@
+# copied by sbt-microsites
+docs/**/contributing.md
+
 # sbt
 lib_managed
 project/project

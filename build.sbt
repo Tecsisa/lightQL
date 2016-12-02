@@ -2,23 +2,11 @@ lazy val lightql = project
   .in(file("."))
   .enablePlugins(NoPublish)
   .disablePlugins(BintrayPlugin)
-  .aggregate(dsl, elastic)
+  .aggregate(dsl, elastic, docs)
 
-lazy val `docs` = project
-  .enablePlugins(MicrositesPlugin, NoPublish)
-  .settings(micrositeSettings)
-
-lazy val micrositeSettings = Seq(
-  micrositeName := "lightql",
-  micrositeDescription := "Easy query language for Elasticsearch",
-  micrositeBaseUrl := "lightql",
-  micrositeDocumentationUrl := "/lightql/docs/",
-  micrositeAuthor := "Tecsisa",
-  micrositeHomepage := "http://www.tecsisa.com",
-  micrositeExtraMdFiles := Map(file("CONTRIBUTING.md") -> "contributing.md", file("README.md") -> "index.md"),
-  micrositeGithubOwner := "Tecsisa",
-  micrositeGithubRepo := "lightql"
-)
+lazy val docs = project
+  .enablePlugins(MicrositesPlugin, NoPublish, PublishUnidoc)
+  .disablePlugins(BintrayPlugin)
 
 lazy val dsl = project
   .in(file("lightql-dsl"))

@@ -1,8 +1,7 @@
 ---
-layout: page
-title:  "Contributing"
-section: "contributing"
-position: 1
+layout:   docs
+title:    "Contributing"
+position: 10
 ---
 
 ## Contribution policy

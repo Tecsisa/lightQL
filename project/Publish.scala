@@ -1,5 +1,6 @@
-import sbt._, Keys._
-import com.typesafe.sbt.GitPlugin
+import sbt._
+import Keys._
+import microsites.MicrositesPlugin
 
 /**
   * For projects that are not to be published.
@@ -7,7 +8,7 @@ import com.typesafe.sbt.GitPlugin
 object NoPublish extends AutoPlugin {
   import com.typesafe.sbt.pgp.PgpKeys._
 
-  override def requires = plugins.JvmPlugin && GitPlugin
+  override def requires = plugins.JvmPlugin
 
   override def projectSettings = Seq(
     publishArtifact := false,
@@ -29,6 +30,28 @@ object Publish extends AutoPlugin {
     bintrayPackage := "lightQL",
     bintrayOrganization := Some("tecsisa"),
     bintrayRepository := "maven-bintray-repo"
+  )
+}
+
+object PublishUnidoc extends AutoPlugin {
+  import sbtunidoc.Plugin._
+  import sbtunidoc.Plugin.UnidocKeys._
+  import com.typesafe.sbt.site.util.SiteHelpers._
+  import microsites.MicrositesPlugin.autoImport._
+
+  override def requires = plugins.JvmPlugin && MicrositesPlugin
+
+  def publishOnly(artifactType: String)(config: PublishConfiguration) = {
+    val newArts = config.artifacts.filterKeys(_.`type` == artifactType)
+    new PublishConfiguration(config.ivyFile, config.resolverName, newArts, config.checksums, config.logging)
+  }
+
+  override def projectSettings = unidocSettings ++ Seq(
+    doc in Compile := (doc in ScalaUnidoc).value,
+    target in unidoc in ScalaUnidoc := crossTarget.value / "api",
+    publishConfiguration ~= publishOnly(Artifact.DocType),
+    publishLocalConfiguration ~= publishOnly(Artifact.DocType),
+    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), micrositeDocumentationUrl)
   )
 }
 

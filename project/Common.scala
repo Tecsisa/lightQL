@@ -5,8 +5,6 @@ import de.heikoseeberger.sbtheader._
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import com.typesafe.sbt.GitPlugin
 import org.scalafmt.sbt.ScalaFmtPlugin.autoImport._
-import bintray.BintrayPlugin
-import bintray.BintrayPlugin.autoImport._
 
 object Common extends AutoPlugin {
 
@@ -65,6 +63,12 @@ object Common extends AutoPlugin {
 
     // Scalafmt settings
     formatSbtFiles := false,
-    scalafmtConfig := Some(baseDirectory.in(ThisBuild).value / ".scalafmt.conf")
+    scalafmtConfig := Some(baseDirectory.in(ThisBuild).value / ".scalafmt.conf"),
+
+    // Additional resolvers
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("releases"),
+      "jgit-repo" at "http://download.eclipse.org/jgit/maven" // needed by tut
+    )
   )
 }

@@ -1,6 +1,7 @@
 ---
 layout: docs
-title: Supported queries
+title: "Supported queries"
+position: 2
 ---
 # Supported queries
 
