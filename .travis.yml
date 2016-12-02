@@ -13,7 +13,6 @@ deploy:
   provider: script
   script:
     - /bin/bash "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt ++$TRAVIS_SCALA_VERSION publish
-  dry-run: true
   on:
     tags: true
     repo: Tecsisa/lightQL
