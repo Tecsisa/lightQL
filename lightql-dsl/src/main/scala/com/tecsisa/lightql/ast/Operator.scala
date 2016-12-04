@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2016 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
  */
-package com.tecsisa.lightql.ast
+package com.tecsisa.lightql
+package ast
 
 import Operator._
 import Operator.Associativity._

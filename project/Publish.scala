@@ -1,6 +1,5 @@
 import sbt._
 import Keys._
-import microsites.MicrositesPlugin
 
 /**
   * For projects that are not to be published.
@@ -37,6 +36,8 @@ object PublishUnidoc extends AutoPlugin {
   import sbtunidoc.Plugin._
   import sbtunidoc.Plugin.UnidocKeys._
   import com.typesafe.sbt.site.util.SiteHelpers._
+  import Microsite.micrositeDocumentationBaseUrl
+  import microsites.MicrositesPlugin
   import microsites.MicrositesPlugin.autoImport._
 
   override def requires = plugins.JvmPlugin && MicrositesPlugin
@@ -51,7 +52,7 @@ object PublishUnidoc extends AutoPlugin {
     target in unidoc in ScalaUnidoc := crossTarget.value / "api",
     publishConfiguration ~= publishOnly(Artifact.DocType),
     publishLocalConfiguration ~= publishOnly(Artifact.DocType),
-    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), micrositeDocumentationUrl)
+    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), micrositeDocumentationBaseUrl)
   )
 }
 

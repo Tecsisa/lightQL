@@ -8,6 +8,8 @@ import org.scalafmt.sbt.ScalaFmtPlugin.autoImport._
 
 object Common extends AutoPlugin {
 
+
+
   final val FileHeader = (HeaderPattern.cStyleBlockComment,
     """|/*
        | * Copyright (C) 2016 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>

@@ -132,6 +132,6 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
   refresh("songs")
   blockUntilCount(10, "songs")
 
-  protected def q(qs: String): Query = LightqlParser().parse(qs).get.value
+  protected def q(qs: String): Query = LightqlParser.parse(qs).get.value
 
 }

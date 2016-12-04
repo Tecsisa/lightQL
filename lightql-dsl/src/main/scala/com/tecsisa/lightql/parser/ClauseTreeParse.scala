@@ -13,7 +13,10 @@ import com.tecsisa.lightql.parser.white._
 
 import scala.annotation.tailrec
 
-case object ClauseTreeParse extends StringParser[ClauseTree] with Operators with BasicParsers {
+private[parser] case object ClauseTreeParse
+    extends StringParser[ClauseTree]
+    with Operators
+    with BasicParsers {
 
   val element = P(date | double | integer | quoted(CharPred(_ != '"').rep))
   val field   = P(charSeq.rep(sep = ".".?)).!

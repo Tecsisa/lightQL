@@ -16,7 +16,7 @@ trait QueryMatchers extends Matchers {
 
   def parseTo(query: Query): Matcher[String] = new Matcher[String] {
     override def apply(left: String): MatchResult = {
-      val parsed = LightqlParser().parse(left)
+      val parsed = LightqlParser.parse(left)
       val (msg, passes) = parsed match {
         case Success(v, _)  => (s"but parsed to $v", parsed.get.value == query)
         case error: Failure => (s"with failure: ${error.msg}", false)
@@ -31,7 +31,7 @@ trait QueryMatchers extends Matchers {
 
   def notParse: Matcher[String] = new Matcher[String] {
     override def apply(left: String): MatchResult = {
-      val parsed = LightqlParser().parse(left)
+      val parsed = LightqlParser.parse(left)
       val (msg, passes) = parsed match {
         case Success(v, _)  => (v, false)
         case error: Failure => (error.msg, true)

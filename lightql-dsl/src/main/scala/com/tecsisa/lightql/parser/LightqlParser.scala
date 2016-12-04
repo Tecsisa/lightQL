@@ -9,11 +9,11 @@ import com.tecsisa.lightql.ast.Query
 import com.tecsisa.lightql.parser.white._
 
 object LightqlParser extends LightqlParser {
-  def apply(): Parser[Query] = P(space ~ clauseTree ~ End) map Query
+  def parse(s: String): StringParsed[Query] = (P(space ~ clauseTree ~ End) map Query).parse(s)
 }
 
-trait LightqlParser extends BasicParsers with Operators {
+private[parser] trait LightqlParser extends BasicParsers with Operators {
 
   /** ClauseTree section */
-  val clauseTree = P(ClauseTreeParse)
+  protected[this] val clauseTree = P(ClauseTreeParse)
 }

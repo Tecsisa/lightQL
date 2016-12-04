@@ -10,25 +10,25 @@ import com.tecsisa.lightql.ast.MatchingOperator
 import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
 import com.tecsisa.lightql.ast.NumericOperator.{ <, <=, >, >= }
 
-trait Operators extends BasicParsers {
-  val eqOperator = P("=" | "!=").!.map {
+private[parser] trait Operators extends BasicParsers {
+  protected[this] val eqOperator = P("=" | "!=").!.map {
     case "="  => EqualityOperator.`=`
     case "!=" => EqualityOperator.!=
   }
-  val matchingOperator = P("~" | "!~").!.map {
+  protected[this] val matchingOperator = P("~" | "!~").!.map {
     case "~"  => MatchingOperator.~
     case "!~" => MatchingOperator.!~
   }
-  val numericOperator = P(">=" | "<=" | "<" | ">").!.map {
+  protected[this] val numericOperator = P(">=" | "<=" | "<" | ">").!.map {
     case ">=" => >=
     case "<=" => <=
     case "<"  => <
     case ">"  => >
   }
-  val logicOperator =
+  protected[this] val logicOperator =
     monospaced(P(IgnoreCase("and") | IgnoreCase("or")).!).map(_.toLowerCase).map {
       case "and" => and
       case "or"  => or
     }
-  val clauseOperator = eqOperator | matchingOperator | numericOperator
+  protected[this] val clauseOperator = eqOperator | matchingOperator | numericOperator
 }

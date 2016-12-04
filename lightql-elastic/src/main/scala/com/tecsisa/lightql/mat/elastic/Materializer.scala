@@ -22,14 +22,6 @@ trait Materializer[T] {
 
 object Materializer {
 
-  def isNested(field: ClauseTree.Field): Boolean = field.contains(".")
-
-  def fieldPath(field: ClauseTree.Field): String =
-    field.dropRight(field.split("\\.").last.length + 1)
-
-  def nestQuery(qb: QueryBuilder, field: ClauseTree.Field): QueryBuilder =
-    if (isNested(field)) nestedQuery(fieldPath(field), qb, ScoreMode.None) else qb
-
   implicit def elasticMaterializer: Materializer[QueryBuilder] =
     new Materializer[QueryBuilder] {
       def materialize(query: Query): QueryBuilder = {
@@ -115,5 +107,13 @@ object Materializer {
         } // loop
         loop(query.ct, boolQuery())
       }
+
+      private[this] def isNested(field: ClauseTree.Field): Boolean = field.contains(".")
+
+      private[this] def fieldPath(field: ClauseTree.Field): String =
+        field.dropRight(field.split("\\.").last.length + 1)
+
+      private[this] def nestQuery(qb: QueryBuilder, field: ClauseTree.Field): QueryBuilder =
+        if (isNested(field)) nestedQuery(fieldPath(field), qb, ScoreMode.None) else qb
     } // Materializer
 }

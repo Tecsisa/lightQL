@@ -19,9 +19,7 @@ lazy val dsl = project
       Library.nscalaTime,
       Library.scalaTest % Test
     ),
-    initialCommands := """|import com.tecsisa.lightql.parser.LightqlParser._
-                          |import com.tecsisa.lightql.ast.ClauseTree._
-                          |""".stripMargin
+    initialCommands := "import com.tecsisa.lightql.parser.LightqlParser._"
   )
 
 lazy val elastic = project
