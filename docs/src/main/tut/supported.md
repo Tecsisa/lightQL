@@ -1,51 +1,27 @@
 ---
 layout: docs
 title: "Supported queries"
-position: 2
+position: 3
 ---
+
 # Supported queries
 
-## Find exact values
+You'll find below some examples of the kind of supported queries:
 
-Filters are very fast and are easily cached. 
+```tut
+import com.tecsisa.lightql.parser._
 
-If we want find exact values then we have to use `=`, for example a composer name:
-
-    composer = "\Johann Sebastian Bach\"
-    
-In case that we want find all composers who are not called with one name, we have to use `!=`:
-
-    composer != "\Johann Sebastian Bach\"
-    
-We can find with multiple values:
-   
-    genre != [\"Classical\", \"Jazz\"]
-    
-## Match query
-
-The match query is for full-text search.
-
-    name ~ \"Paranoid Android\"
-    name !~ \"Paranoid Android\"
-    
-# Range queries
-
-Matches documents with fields that have terms within a certain range.
-
-    year > 1955
-    year < 1955
-    year >= 1955
-    year <= 1955
-    
-## Nested queries
-
-    date.year > 2000
-    stats.rate.stars = 4.5
-    
-## Combined clause
-
-We can use combined clauses using logical `(or, and)` operators:
-    
-    year > 1955 and year < 2000
-    composer != \"Johann Sebastian Bach\" and genre = \"Jazz\"
-        
+parse("foo = 25") // filtered (a.k.a. exact query)
+parse("foo != 25") // not equals
+parse("foo ~ 25") // match query
+parse("foo !~ 25") // not matches
+parse("foo.name = \"foobar\"") // nested
+parse("foo > 25") // range (greater than)
+parse("foo < 25") // range (less than)
+parse("foo >= 25")
+parse("foo <= 25")
+parse("foo = 25 and foo = 10") // combined
+parse("foo = 25 or foo = 10")
+parse("foo = 25 or foo = 10 and bar = 40")
+parse("foo = 25 or (foo = 10 and bar = 40)") // as in SQL, the grammar is left recursive
+```

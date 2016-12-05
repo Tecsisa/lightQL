@@ -1,10 +1,10 @@
 ---
 layout:   docs
 title:    "Constructing lightQL queries"
-position: 3
+position: 1
 ---
 
-# Constructing lightQL queries
+# Constructing queries
 
 Generally speaking, you can apply some intuition about how a query should be
 based on your knowledge of SQL and other similar languages. The only important difference

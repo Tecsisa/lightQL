@@ -1,13 +1,13 @@
 options:
 
-  - title: Types
-    url: types.html
+  - title: Constructing queries
+    url: constructing.html
+
+  - title: Term types
+    url: term_types.html
 
   - title: Supported queries
     url: supported.html
-
-  - title: Constructing lightQL queries
-    url: constructing.html
 
   - title: Contributing
     url: contributing.html
