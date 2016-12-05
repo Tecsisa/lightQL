@@ -4,4 +4,7 @@
 
 **lightQL** is a minimal external DSL for searching that compiles to Scala.
 
-TBC
+Please, visit the documentation site here:
+
+https://tecsisa.github.io/lightQL/
+

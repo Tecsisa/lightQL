@@ -6,5 +6,8 @@ options:
   - title: Supported queries
     url: supported.html
 
+  - title: Constructing lightQL queries
+    url: constructing.html
+
   - title: Contributing
     url: contributing.html

@@ -22,7 +22,7 @@ trait Materializer[T] {
 
 object Materializer {
 
-  implicit def elasticMaterializer: Materializer[QueryBuilder] =
+  implicit val elasticMaterializer: Materializer[QueryBuilder] =
     new Materializer[QueryBuilder] {
       def materialize(query: Query): QueryBuilder = {
         def loop(ct: ClauseTree, qb: BoolQueryBuilder): QueryBuilder = {

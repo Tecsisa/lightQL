@@ -7,6 +7,7 @@ lazy val lightql = project
 lazy val docs = project
   .enablePlugins(MicrositesPlugin, NoPublish, PublishUnidoc)
   .disablePlugins(BintrayPlugin)
+  .dependsOn(elastic)
 
 lazy val dsl = project
   .in(file("lightql-dsl"))
@@ -19,7 +20,7 @@ lazy val dsl = project
       Library.nscalaTime,
       Library.scalaTest % Test
     ),
-    initialCommands := "import com.tecsisa.lightql.parser.LightqlParser._"
+    initialCommands := "import com.tecsisa.lightql.parser._"
   )
 
 lazy val elastic = project
@@ -30,6 +31,7 @@ lazy val elastic = project
     version := Version.ElasticMaterializer,
     libraryDependencies ++= Seq(
       Library.elastic4s,
+      "com.vividsolutions" % "jts" % "1.13", // https://github.com/sksamuel/elastic4s/issues/507
       Library.elastic4sTestkit % Test
     )
   )

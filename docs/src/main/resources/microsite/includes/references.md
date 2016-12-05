@@ -1,1 +1,14 @@
-[api]: https://tecsisa.github.io/lightql/api/
+[apache-license]: https://www.apache.org/licenses/LICENSE-2.0
+[bintray-jcenter]: https://bintray.com/bintray/jcenter
+[docs-github]: https://github.com/Tecsisa/lightQL/tree/master/docs
+[elastic-analysis]: https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html
+[elastic-homepage]: https://www.elastic.co/products/elasticsearch
+[elastic-java-api]: https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/java-query-dsl.html
+[elastic-query-dsl-reference]: https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html
+[elastic4s-github-url]: https://github.com/sksamuel/elastic4s
+[fastparse-github]: https://github.com/lihaoyi/fastparse
+[jql-reference]: https://confluence.atlassian.com/jirasoftwarecloud/advanced-searching-764478330.html
+[lihaoyi-github]: https://github.com/lihaoyi
+[maven-central]: http://search.maven.org/
+[sksamuel-github]: https://github.com/sksamuel
+[solr-homepage]: http://lucene.apache.org/solr/
