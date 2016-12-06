@@ -12,7 +12,7 @@ jdk:
 deploy:
   provider: script
   script:
-    - /bin/bash "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt ++$TRAVIS_SCALA_VERSION publish && if [ "${TRAVIS_SCALA_VERSION}" = "2.12.1" ]; then sbt publishMicrosite; fi
+    - /bin/bash "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt ++$TRAVIS_SCALA_VERSION publish
   on:
     tags: true
     repo: Tecsisa/lightQL
