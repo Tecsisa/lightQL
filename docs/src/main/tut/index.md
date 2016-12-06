@@ -6,6 +6,11 @@ section: "home"
 
 [![Build Status](https://travis-ci.org/Tecsisa/lightQL.svg?branch=master)](https://travis-ci.org/Tecsisa/lightQL)
 
+| Artifact | Maven Central |
+| :--- | :---: |
+| lightql-dsl | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-dsl_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-dsl_2.11) |
+| lighql-elastic | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-elastic_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-elastic_2.11) |
+
 lightQL is an external DSL for searching that compiles to a Scala AST and can be materialized to other target languages (a.k.a. APIs),
 e.g. the [Elasticsearch API][elastic-java-api]. Used in conjunction with [elastic4s][elastic4s-github-url],
 lightQL can deliver a better developer experience regarding the work with [Elasticsearch][elastic-homepage],
