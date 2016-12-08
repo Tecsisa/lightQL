@@ -14,7 +14,7 @@ object Microsite extends AutoPlugin {
 
   override def projectSettings = Seq(
     micrositeName := "lightQL",
-    micrositeDescription := "A minimal external DSL for searching that compiles to Scala",
+    micrositeDescription := "A minimal external search DSL that compiles to Scala",
     micrositeBaseUrl := "/lightQL",
     micrositeDocumentationBaseUrl := "api",
     micrositeDocumentationUrl := micrositeDocumentationBaseUrl.value + "/#com.tecsisa.lightql.parser.LightqlParser$",

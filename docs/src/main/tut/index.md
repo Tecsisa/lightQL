@@ -11,7 +11,7 @@ section: "home"
 | lightql-dsl | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-dsl_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-dsl_2.11) |
 | lightql-elastic | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-elastic_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-elastic_2.11) |
 
-lightQL is an external DSL for searching that compiles to a Scala AST and can be materialized to other target languages (a.k.a. APIs),
+lightQL a minimal external search DSL that compiles to a Scala AST and can be materialized to other target languages (a.k.a. APIs),
 e.g. the [Elasticsearch API][elastic-java-api]. Used in conjunction with [elastic4s][elastic4s-github-url],
 lightQL can deliver a better developer experience regarding the work with [Elasticsearch][elastic-homepage],
 especially in simple scenarios where advanced searching capabilities are not required.
@@ -21,17 +21,17 @@ especially in simple scenarios where advanced searching capabilities are not req
 ## Motivation
 
 Being [elastic4s][elastic4s-github-url] an amazing Scala EDSL to work with Elasticsearch, you'll sometimes find yourself
-in need of interpreting external queries coming from a web service request or an UI, possibly even
-written by end users that might be used to popular query languages as SQL or [JQL][jql-reference].
+in need of interpreting external queries coming from a web service request or an UI, possibly even written
+by end users that might be familiar with popular query languages as SQL or [JQL][jql-reference].
 
 In that case, what Elasticsearch provides is a [JSON based Query DSL][elastic-query-dsl-reference] that is far from being simple and succinct.
 Having to support a lot of features in regards to searching and indexing capabilities, it might be understandable
 such a complexity but it's clear that, at least for simple use cases, this DSL seems overcomplicated.
 
-lightQL is aimed at tackle this problem providing a more simple language-agnostic query DSL for Elasticsearch.
-As an additional advantage, the language grammar is not strongly tied to Elasticsearch, the materializer is, so that
-it's always possible to implement new materializers that work for future and possibly breaking Elasticsearch versions
-or even for other back-ends, as [Solr][solr-homepage], that share semantic features with Elasticsearch.
+lightQL is aimed at tackling this problem by providing a more simple language-agnostic query DSL for Elasticsearch.
+As an additional advantage, the language grammar is not strongly tied to Elasticsearch although the materializer is, so that
+it is always possible to implement new materializers that work in future Elasticsearch versions or even for other back-ends,
+as [Solr][solr-homepage], that share semantic features with Elasticsearch.
 
 ## Contributions
 
