@@ -31,7 +31,6 @@ lazy val elastic = project
     version := Version.ElasticMaterializer,
     libraryDependencies ++= Seq(
       Library.elastic4s,
-      "com.vividsolutions" % "jts" % "1.13", // https://github.com/sksamuel/elastic4s/issues/507
       Library.elastic4sTestkit % Test
     )
   )
