@@ -12,7 +12,7 @@ object Common extends AutoPlugin {
     """|/*
        | * Copyright (C) 2016 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
        | */
-       | """.stripMargin)
+       |""".stripMargin)
 
   override def requires = JvmPlugin && GitPlugin && HeaderPlugin
 
