@@ -106,6 +106,37 @@ class SearchSpec extends SearchBaseTest {
       val q6 = q("price > 0.99 and stats.rate.stars < 4.5 and date.year >= 2000")
       search in "songs" query q6 should haveTotalHits(3)
     }
+
+    "find exact results in queries with multiple clauses and at least one of them having multiple values" in {
+      val q1 = q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] and genre = \"Classical\"")
+      search("songs") query q1 should haveTotalHits(1)
+      val q2 = q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] or genre = \"Classical\"")
+      search("songs") query q2 should haveTotalHits(4)
+      val q3 = q(
+        "composer = [\"Johann Sebastian Bach\", \"Radiohead\"] and genre = [\"Classical\", \"Pop/Rock\"]")
+      search("songs") query q3 should haveTotalHits(2)
+      val q4 = q(
+        "composer = [\"Johann Sebastian Bach\", \"Radiohead\"] or genre = [\"Classical\", \"Pop/Rock\"]")
+      search("songs") query q4 should haveTotalHits(8)
+      val q5 =
+        q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] and genre != \"Classical\"")
+      search("songs") query q5 should haveTotalHits(1)
+      val q6 =
+        q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] or genre != \"Jazz\"")
+      search("songs") query q6 should haveTotalHits(8)
+      val q7 = q(
+        "composer = [\"Johann Sebastian Bach\", \"Radiohead\"] and genre != [\"Classical\", \"Pop/Rock\"]")
+      search("songs") query q7 should haveTotalHits(0)
+      val q8 = q(
+        "composer = [\"Johann Sebastian Bach\", \"Radiohead\"] or genre != [\"Classical\", \"Jazz\"]")
+      search("songs") query q8 should haveTotalHits(6)
+      val q9 = q(
+        "composer != [\"Johann Sebastian Bach\", \"Radiohead\"] and genre != [\"Classical\", \"Pop/Rock\"]")
+      search("songs") query q9 should haveTotalHits(2)
+      val q10 = q(
+        "composer != [\"Johann Sebastian Bach\", \"Radiohead\"] or genre != [\"Classical\", \"Pop/Rock\"]")
+      search("songs") query q10 should haveTotalHits(8)
+    }
   }
 
 }
