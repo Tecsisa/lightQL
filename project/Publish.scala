@@ -22,7 +22,7 @@ object Publish extends AutoPlugin {
   import bintray.BintrayPlugin
   import bintray.BintrayPlugin.autoImport._
 
-  override def trigger = allRequirements
+  override def trigger  = allRequirements
   override def requires = BintrayPlugin
 
   override def projectSettings = Seq(
@@ -44,7 +44,11 @@ object PublishUnidoc extends AutoPlugin {
 
   def publishOnly(artifactType: String)(config: PublishConfiguration) = {
     val newArts = config.artifacts.filterKeys(_.`type` == artifactType)
-    new PublishConfiguration(config.ivyFile, config.resolverName, newArts, config.checksums, config.logging)
+    new PublishConfiguration(config.ivyFile,
+                             config.resolverName,
+                             newArts,
+                             config.checksums,
+                             config.logging)
   }
 
   override def projectSettings = unidocSettings ++ Seq(
@@ -55,4 +59,3 @@ object PublishUnidoc extends AutoPlugin {
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), micrositeDocumentationBaseUrl)
   )
 }
-

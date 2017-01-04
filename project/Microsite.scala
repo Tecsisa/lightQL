@@ -5,6 +5,7 @@ object Microsite extends AutoPlugin {
   import com.typesafe.sbt.SbtGit.git
   import microsites.MicrositesPlugin
   import microsites.MicrositesPlugin.autoImport._
+  import microsites._
 
   override def requires = MicrositesPlugin
 
@@ -20,7 +21,8 @@ object Microsite extends AutoPlugin {
     micrositeDocumentationUrl := micrositeDocumentationBaseUrl.value + "/#com.tecsisa.lightql.parser.LightqlParser$",
     micrositeAuthor := "Tecsisa",
     micrositeHomepage := "http://www.tecsisa.com",
-    micrositeExtraMdFiles := Map(file("CONTRIBUTING.md") -> "contributing.md"),
+    micrositeExtraMdFiles := Map(
+      file("CONTRIBUTING.md") -> ExtraMdFileConfig("contributing.md", "docs")),
     micrositeGithubOwner := "Tecsisa",
     micrositeGithubRepo := "lightQL",
     git.remoteRepo := scmInfo.value.head.connection
