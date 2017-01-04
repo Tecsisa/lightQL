@@ -28,10 +28,18 @@ object Materializer {
         def loop(ct: ClauseTree, qb: BoolQueryBuilder): QueryBuilder = {
           import com.tecsisa.lightql.ast.LogicOperator
 
+          def buildTermQueryFromClause[V](field: ClauseTree.Field, value: V): QueryBuilder =
+            value match {
+              case list: List[_] => termsQuery(field, list.asJava)
+              case _             => termQuery(field, value)
+            }
+
           def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryBuilder): QueryBuilder =
             c.op match {
-              case EqOp.`=`   => qb.filter(nestQuery(termQuery(c.field, c.value), c.field))
-              case EqOp.!=    => qb.mustNot(nestQuery(termQuery(c.field, c.value), c.field))
+              case EqOp.`=` =>
+                qb.must(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
+              case EqOp.!= =>
+                qb.mustNot(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
               case MatchOp.~  => qb.must(nestQuery(matchQuery(c.field, c.value), c.field))
               case MatchOp.!~ => qb.mustNot(nestQuery(matchQuery(c.field, c.value), c.field))
               case NumOp.<    => qb.filter(nestQuery(rangeQuery(c.field).lt(c.value), c.field))
@@ -58,16 +66,8 @@ object Materializer {
           ct match {
             case Clause(field, op, value) =>
               val query = op match {
-                case EqOp.`=` =>
-                  value match {
-                    case list: List[_] => termsQuery(field, list.asJava)
-                    case _             => termQuery(field, value)
-                  }
-                case EqOp.!= =>
-                  value match {
-                    case list: List[_] => boolQuery().mustNot(termsQuery(field, list.asJava))
-                    case _             => boolQuery().mustNot(termQuery(field, value))
-                  }
+                case EqOp.`=`   => buildTermQueryFromClause(field, value)
+                case EqOp.!=    => boolQuery().mustNot(buildTermQueryFromClause(field, value))
                 case MatchOp.~  => matchQuery(field, value)
                 case MatchOp.!~ => boolQuery().mustNot(matchQuery(field, value))
                 case NumOp.<    => rangeQuery(field).lt(value)
