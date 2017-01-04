@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2016 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
  */
-package com.tecsisa.lightql
+ package com.tecsisa.lightql
 package mat
 package elastic
 
@@ -135,6 +135,6 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
   refresh("songs")
   blockUntilCount(10, "songs")
 
-  protected def q(qs: String): Query = LightqlParser().parse(qs).get.value
+  protected def q(qs: String): Query = LightqlParser.parse(qs).get.value
 
 }

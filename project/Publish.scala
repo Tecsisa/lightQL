@@ -13,4 +13,3 @@ object NoPublish extends AutoPlugin {
     publishLocal := {}
   )
 }
-

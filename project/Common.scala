@@ -4,14 +4,14 @@ import sbt.plugins.JvmPlugin
 import de.heikoseeberger.sbtheader._
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import com.typesafe.sbt.GitPlugin
-import org.scalafmt.sbt.ScalaFmtPlugin.autoImport._
 import bintray.BintrayPlugin
 import bintray.BintrayPlugin.autoImport._
 
 object Common extends AutoPlugin {
 
-  final val FileHeader = (HeaderPattern.cStyleBlockComment,
-    """|/*
+  final val FileHeader =
+    (HeaderPattern.cStyleBlockComment,
+     """|/*
        | * Copyright (C) 2016 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
        | */
        | """.stripMargin)
@@ -20,22 +20,25 @@ object Common extends AutoPlugin {
 
   override def trigger = allRequirements
 
-  override def projectSettings = reformatOnCompileSettings ++ Seq(
+  override def projectSettings = Seq(
     organization := "com.tecsisa",
     organizationName := "Tecnología, Sistemas y Aplicaciones S.L.",
     organizationHomepage := Some(url("http://www.tecsisa.com/")),
     homepage := Some(url("https://github.com/Tecsisa/lightQL")),
-    scmInfo := Some(ScmInfo(url("https://github.com/Tecsisa/lightQL"), "git@github.com:Tecsisa/lightQL.git")),
-    developers += Developer("contributors", "Contributors", "", url("https://github.com/Tecsisa/lightQL/graphs/contributors")),
+    scmInfo := Some(
+      ScmInfo(url("https://github.com/Tecsisa/lightQL"), "git@github.com:Tecsisa/lightQL.git")),
+    developers += Developer("contributors",
+                            "Contributors",
+                            "",
+                            url("https://github.com/Tecsisa/lightQL/graphs/contributors")),
     pomIncludeRepository := (_ => false),
     licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
-
     scalaVersion := crossScalaVersions.value.head,
     crossScalaVersions := Version.ScalaVersions,
     crossVersion := CrossVersion.binary,
-
     scalacOptions ++= Seq(
-      "-encoding", "UTF-8",
+      "-encoding",
+      "UTF-8",
       "-unchecked",
       "-deprecation",
       "-Xlint",
@@ -44,22 +47,18 @@ object Common extends AutoPlugin {
       "-Ywarn-unused-import", // only 2.11
       "-Xfuture" // prevents of future breaking changes
     ),
-
     javacOptions ++= Seq(
       "-Xlint:unchecked"
     ),
-
     // show full stack traces and test case durations
     testOptions in Test += Tests.Argument("-oDF"),
-
     headers := headers.value ++ Map("scala" -> FileHeader),
-
     // Bintray settings
     bintrayPackage := "lightQL",
     bintrayOrganization := Some("tecsisa"),
     bintrayRepository := "maven-bintray-repo",
-
-    resolvers += Resolver.bintrayRepo("tecsisa", "maven-bintray-repo"), // remove after maven central sync
+    resolvers += Resolver
+      .bintrayRepo("tecsisa", "maven-bintray-repo"), // remove after maven central sync
 
     // @see
     // http://stackoverflow.com/questions/26940253/in-sbt-how-do-you-override-scalacoptions-for-console-in-all-configurations
@@ -67,11 +66,7 @@ object Common extends AutoPlugin {
     scalacOptions in (Test, console) := (scalacOptions in (Compile, console)).value,
     unmanagedSourceDirectories.in(Compile) := Vector(scalaSource.in(Compile).value),
     unmanagedSourceDirectories.in(Test) := Vector(scalaSource.in(Test).value),
-
-    ivyScala := ivyScala.value.map(_.copy(overrideScalaVersion = sbtPlugin.value)), // TODO Remove once this workaround no longer needed (https://github.com/sbt/sbt/issues/2786)!
-
-    // Scalafmt settings
-    formatSbtFiles := false,
-    scalafmtConfig := Some(baseDirectory.in(ThisBuild).value / ".scalafmt.conf")
+    ivyScala := ivyScala.value
+      .map(_.copy(overrideScalaVersion = sbtPlugin.value)) // TODO Remove once this workaround no longer needed (https://github.com/sbt/sbt/issues/2786)!
   )
 }
