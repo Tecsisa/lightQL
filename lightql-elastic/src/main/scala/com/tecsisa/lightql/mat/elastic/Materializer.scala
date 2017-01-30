@@ -30,8 +30,8 @@ object Materializer {
 
           def buildTermQueryFromClause[V](field: ClauseTree.Field, value: V): QueryBuilder =
             value match {
-              case list: List[_] => termsQuery(field, list.asJava)
-              case _             => termQuery(field, value)
+              case list: List[_] => termsQuery(stdField(field), list.asJava)
+              case _             => termQuery(stdField(field), value)
             }
 
           def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryBuilder): QueryBuilder =
@@ -40,12 +40,12 @@ object Materializer {
                 qb.must(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
               case EqOp.!= =>
                 qb.mustNot(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
-              case MatchOp.~  => qb.must(nestQuery(matchQuery(c.field, c.value), c.field))
-              case MatchOp.!~ => qb.mustNot(nestQuery(matchQuery(c.field, c.value), c.field))
-              case NumOp.<    => qb.filter(nestQuery(rangeQuery(c.field).lt(c.value), c.field))
-              case NumOp.<=   => qb.filter(nestQuery(rangeQuery(c.field).lte(c.value), c.field))
-              case NumOp.>    => qb.filter(nestQuery(rangeQuery(c.field).gt(c.value), c.field))
-              case NumOp.>=   => qb.filter(nestQuery(rangeQuery(c.field).gte(c.value), c.field))
+              case MatchOp.~  => qb.must(nestQuery(matchQuery(stdField(c.field), c.value), c.field))
+              case MatchOp.!~ => qb.mustNot(nestQuery(matchQuery(stdField(c.field), c.value), c.field))
+              case NumOp.<    => qb.filter(nestQuery(rangeQuery(stdField(c.field)).lt(c.value), c.field))
+              case NumOp.<=   => qb.filter(nestQuery(rangeQuery(stdField(c.field)).lte(c.value), c.field))
+              case NumOp.>    => qb.filter(nestQuery(rangeQuery(stdField(c.field)).gt(c.value), c.field))
+              case NumOp.>=   => qb.filter(nestQuery(rangeQuery(stdField(c.field)).gte(c.value), c.field))
               case _          => qb
             }
 
@@ -68,12 +68,12 @@ object Materializer {
               val query = op match {
                 case EqOp.`=`   => buildTermQueryFromClause(field, value)
                 case EqOp.!=    => boolQuery().mustNot(buildTermQueryFromClause(field, value))
-                case MatchOp.~  => matchQuery(field, value)
-                case MatchOp.!~ => boolQuery().mustNot(matchQuery(field, value))
-                case NumOp.<    => rangeQuery(field).lt(value)
-                case NumOp.<=   => rangeQuery(field).lte(value)
-                case NumOp.>    => rangeQuery(field).gt(value)
-                case NumOp.>=   => rangeQuery(field).gte(value)
+                case MatchOp.~  => matchQuery(stdField(field), value)
+                case MatchOp.!~ => boolQuery().mustNot(matchQuery(stdField(field), value))
+                case NumOp.<    => rangeQuery(stdField(field)).lt(value)
+                case NumOp.<=   => rangeQuery(stdField(field)).lte(value)
+                case NumOp.>    => rangeQuery(stdField(field)).gt(value)
+                case NumOp.>=   => rangeQuery(stdField(field)).gte(value)
                 case _          => sys.error("Impossible")
               }
               isNested(field) match {
@@ -108,10 +108,12 @@ object Materializer {
         loop(query.ct, boolQuery())
       }
 
-      private[this] def isNested(field: ClauseTree.Field): Boolean = field.contains(".")
+      private[this] def stdField(field: ClauseTree.Field): ClauseTree.Field = field.replace("->", ".")
+      
+      private[this] def isNested(field: ClauseTree.Field): Boolean = field.contains("->")
 
       private[this] def fieldPath(field: ClauseTree.Field): String =
-        field.dropRight(field.split("\\.").last.length + 1)
+        stdField(field.dropRight(field.split("->").last.length + 2))
 
       private[this] def nestQuery(qb: QueryBuilder, field: ClauseTree.Field): QueryBuilder =
         if (isNested(field)) nestedQuery(fieldPath(field), qb, ScoreMode.None) else qb

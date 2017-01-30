@@ -25,7 +25,7 @@ import com.tecsisa.lightql.parser._
 
 parse("composer = \"Johann Sebastian Bach\"") // songs composed by `Johann Sebastian Bach`
 parse("genre != \"Classical\"") // songs that its genre is `Classical`
-parse("stats.rate.stars = 5.0") // songs starred with 5.0
+parse("stats->rate.stars = 5.0") // songs starred with 5.0
 parse("composer = \"Johann Sebastian Bach\" and price > 0.99") // songs by `Johann Sebastian Bach` that its price is greater than 0.99
 ```
 
