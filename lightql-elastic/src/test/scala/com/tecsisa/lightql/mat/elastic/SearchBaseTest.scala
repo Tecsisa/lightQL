@@ -21,13 +21,13 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
         textField("artist"),
         textField("composer") analyzer KeywordAnalyzer,
         textField("genre") analyzer KeywordAnalyzer,
-        nestedField("date") as (
+        objectField("date") as (
           dateField("full"),
           intField("year")
         ),
         doubleField("price"),
         nestedField("stats") as (
-          nestedField("rate") as doubleField("stars")
+          objectField("rate") as doubleField("stars")
         )
       )
     )

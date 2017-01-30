@@ -15,7 +15,10 @@ parse("foo = 25") // filtered (a.k.a. exact query)
 parse("foo != 25") // not equals
 parse("foo ~ 25") // match query
 parse("foo !~ 25") // not matches
-parse("foo.name = \"foobar\"") // nested
+parse("foo->name = \"foobar\"") // nested
+parse("foo.count = 25") // object
+parse("foo->bar.name = \"foobar\"") // object inside nested
+parse("foo.bar->count = 25") // nested inside object
 parse("foo > 25") // range (greater than)
 parse("foo < 25") // range (less than)
 parse("foo >= 25")
