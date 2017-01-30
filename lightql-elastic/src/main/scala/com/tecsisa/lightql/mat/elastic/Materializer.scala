@@ -30,16 +30,16 @@ object Materializer {
 
           def buildTermQueryFromClause[V](field: ClauseTree.Field, value: V): QueryBuilder =
             value match {
-              case list: List[_] => termsQuery(field, list.asJava)
-              case _             => termQuery(field, value)
+              case list: List[_] => termsQuery(stdField(field), list.asJava)
+              case _             => termQuery(stdField(field), value)
             }
 
           def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryBuilder): QueryBuilder =
             c.op match {
               case EqOp.`=` =>
-                qb.must(nestQuery(buildTermQueryFromClause(stdField(c.field), c.value), c.field))
+                qb.must(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
               case EqOp.!= =>
-                qb.mustNot(nestQuery(buildTermQueryFromClause(stdField(c.field), c.value), c.field))
+                qb.mustNot(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
               case MatchOp.~  => qb.must(nestQuery(matchQuery(stdField(c.field), c.value), c.field))
               case MatchOp.!~ => qb.mustNot(nestQuery(matchQuery(stdField(c.field), c.value), c.field))
               case NumOp.<    => qb.filter(nestQuery(rangeQuery(stdField(c.field)).lt(c.value), c.field))
@@ -66,8 +66,8 @@ object Materializer {
           ct match {
             case Clause(field, op, value) =>
               val query = op match {
-                case EqOp.`=`   => buildTermQueryFromClause(stdField(field), value)
-                case EqOp.!=    => boolQuery().mustNot(buildTermQueryFromClause(stdField(field), value))
+                case EqOp.`=`   => buildTermQueryFromClause(field, value)
+                case EqOp.!=    => boolQuery().mustNot(buildTermQueryFromClause(field, value))
                 case MatchOp.~  => matchQuery(stdField(field), value)
                 case MatchOp.!~ => boolQuery().mustNot(matchQuery(stdField(field), value))
                 case NumOp.<    => rangeQuery(stdField(field)).lt(value)
@@ -116,6 +116,6 @@ object Materializer {
         stdField(field.dropRight(field.split("->").last.length + 2))
 
       private[this] def nestQuery(qb: QueryBuilder, field: ClauseTree.Field): QueryBuilder =
-        if (isNested(field)) nestedQuery(stdField(fieldPath(field)), qb, ScoreMode.None) else qb
+        if (isNested(field)) nestedQuery(fieldPath(field), qb, ScoreMode.None) else qb
     } // Materializer
 }
