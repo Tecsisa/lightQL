@@ -5,7 +5,7 @@ object Version {
   final val ScalaTest           = "3.0.1"
   final val Elastic4s           = "2.3.2"
   final val Dsl                 = "0.1.9"
-  final val ElasticMaterializer = "2.3.5-SNAPSHOT"
+  final val ElasticMaterializer = "2.3.5"
 }
 
 object Library {
