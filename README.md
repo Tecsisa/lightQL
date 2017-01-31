@@ -10,7 +10,7 @@
 **lightQL** is a minimal external search DSL that compiles to Scala. Used in conjunction
 with [elastic4s](https://github.com/sksamuel/elastic4s),
 lightQL can deliver a better developer experience regarding the work with [Elasticsearch](https://www.elastic.co/products/elasticsearch),
-especially in simple scenarios where advanced searching capabilities are not required.
+especially in simple scenarios where advanced search capabilities are not required.
 
 Please, visit the [documentation](https://tecsisa.github.io/lightQL/) site for details
 about how to use it and the motivation to build it.
