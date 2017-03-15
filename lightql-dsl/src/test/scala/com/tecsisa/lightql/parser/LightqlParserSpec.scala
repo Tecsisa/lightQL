@@ -61,7 +61,9 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
       "foo.count = 25" should parseTo { Query(Clause("foo.count", EqOp.`=`, 25)) }
     }
     "parse: `foo->bar.name = \"foobar\"`" in {
-      "foo->bar.name =  \"foobar\"" should parseTo { Query(Clause("foo->bar.name", EqOp.`=`, "foobar")) }
+      "foo->bar.name =  \"foobar\"" should parseTo {
+        Query(Clause("foo->bar.name", EqOp.`=`, "foobar"))
+      }
     }
     "parse: `foo.bar->count = 25`" in {
       "foo.bar->count = 25" should parseTo { Query(Clause("foo.bar->count", EqOp.`=`, 25)) }
