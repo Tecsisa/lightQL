@@ -104,7 +104,6 @@ class SearchSpec extends SearchBaseTest {
       val q6 = q("price > 0.99 and stats->rate.stars < 4.5 and date.year >= 2000")
       search("songs") query q6 should haveTotalHits(3)
     }
-
     "find exact results in queries with multiple clauses and at least one of them having multiple values" in {
       val q1 = q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] and genre = \"Classical\"")
       search("songs") query q1 should haveTotalHits(1)
