@@ -22,7 +22,8 @@ object Microsite extends AutoPlugin {
     micrositeAuthor := "Tecsisa",
     micrositeHomepage := "http://www.tecsisa.com",
     micrositeExtraMdFiles := Map(
-      file("CONTRIBUTING.md") -> ExtraMdFileConfig("contributing.md", "docs")),
+      file("CONTRIBUTING.md") -> ExtraMdFileConfig("contributing.md", "docs")
+    ),
     micrositeGithubOwner := "Tecsisa",
     micrositeGithubRepo := "lightQL",
     git.remoteRepo := scmInfo.value.head.connection

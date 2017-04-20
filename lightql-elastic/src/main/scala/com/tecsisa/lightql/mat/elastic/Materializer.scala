@@ -1,17 +1,13 @@
 /*
- * Copyright (C) 2016 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
+ * Copyright (C) 2016, 2017 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
  */
 package com.tecsisa.lightql
 package mat
 package elastic
 
 import com.sksamuel.elastic4s.searches.queries.BuildableTermsQueryImplicits
-import com.sksamuel.elastic4s.searches.queries.{
-  BoolQueryDefinition,
-  NestedQueryDefinition,
-  QueryDefinition,
-  RangeQueryDefinition
-}
+import com.sksamuel.elastic4s.searches.queries.{ BoolQueryDefinition, NestedQueryDefinition }
+import com.sksamuel.elastic4s.searches.queries.{ QueryDefinition, RangeQueryDefinition }
 import com.sksamuel.elastic4s.searches.queries.matches.MatchQueryDefinition
 import com.sksamuel.elastic4s.searches.queries.term.{ TermQueryDefinition, TermsQueryDefinition }
 import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
@@ -57,21 +53,23 @@ object Materializer extends BuildableTermsQueryImplicits {
                   nestQuery(RangeQueryDefinition(stdField(c.field))
                               .lte(c.value.toString)
                               .includeUpper(false),
-                            c.field))
+                            c.field)
+                )
               case NumOp.<= =>
                 qb.filter(
-                  nestQuery(RangeQueryDefinition(stdField(c.field)).lte(c.value.toString),
-                            c.field))
+                  nestQuery(RangeQueryDefinition(stdField(c.field)).lte(c.value.toString), c.field)
+                )
               case NumOp.> =>
                 qb.filter(
                   nestQuery(RangeQueryDefinition(stdField(c.field))
                               .gte(c.value.toString)
                               .includeLower(false),
-                            c.field))
+                            c.field)
+                )
               case NumOp.>= =>
                 qb.filter(
-                  nestQuery(RangeQueryDefinition(stdField(c.field)).gte(c.value.toString),
-                            c.field))
+                  nestQuery(RangeQueryDefinition(stdField(c.field)).gte(c.value.toString), c.field)
+                )
               case _ => qb
             }
 
