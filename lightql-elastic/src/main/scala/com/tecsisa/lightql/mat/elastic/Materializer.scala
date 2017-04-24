@@ -17,7 +17,6 @@ import com.tecsisa.lightql.ast.{ NumericOperator => NumOp }
 import com.tecsisa.lightql.ast.{ MatchingOperator => MatchOp }
 import com.tecsisa.lightql.ast.LogicOperator
 import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
-import org.apache.lucene.search.join.ScoreMode
 
 trait Materializer[T] {
   def materialize(query: Query): T
@@ -50,10 +49,7 @@ object Materializer extends BuildableTermsQueryImplicits {
                 qb.not(nestQuery(MatchQueryDefinition(stdField(c.field), c.value), c.field))
               case NumOp.< =>
                 qb.filter(
-                  nestQuery(RangeQueryDefinition(stdField(c.field))
-                              .lte(c.value.toString)
-                              .includeUpper(false),
-                            c.field)
+                  nestQuery(RangeQueryDefinition(stdField(c.field)).lt(c.value.toString), c.field)
                 )
               case NumOp.<= =>
                 qb.filter(
@@ -61,10 +57,7 @@ object Materializer extends BuildableTermsQueryImplicits {
                 )
               case NumOp.> =>
                 qb.filter(
-                  nestQuery(RangeQueryDefinition(stdField(c.field))
-                              .gte(c.value.toString)
-                              .includeLower(false),
-                            c.field)
+                  nestQuery(RangeQueryDefinition(stdField(c.field)).gt(c.value.toString), c.field)
                 )
               case NumOp.>= =>
                 qb.filter(
@@ -93,15 +86,15 @@ object Materializer extends BuildableTermsQueryImplicits {
                 case MatchOp.~  => MatchQueryDefinition(stdField(field), value)
                 case MatchOp.!~ => qb.not(MatchQueryDefinition(stdField(field), value))
                 case NumOp.< =>
-                  RangeQueryDefinition(stdField(field)).lte(value.toString).includeUpper(false)
+                  RangeQueryDefinition(stdField(field)).lt(value.toString)
                 case NumOp.<= => RangeQueryDefinition(stdField(field)).lte(value.toString)
                 case NumOp.> =>
-                  RangeQueryDefinition(stdField(field)).gte(value.toString).includeLower(false)
+                  RangeQueryDefinition(stdField(field)).gt(value.toString)
                 case NumOp.>= => RangeQueryDefinition(stdField(field)).gte(value.toString)
                 case _        => sys.error("Impossible")
               }
               if (isNested(field))
-                NestedQueryDefinition(fieldPath(field), query, ScoreMode.None)
+                NestedQueryDefinition(fieldPath(field), query)
               else query
             case CombinedClause(lct, lop, rct) =>
               (lct, rct) match {
@@ -136,6 +129,6 @@ object Materializer extends BuildableTermsQueryImplicits {
         stdField(field.dropRight(field.split("->").last.length + 2))
 
       private[this] def nestQuery(qb: QueryDefinition, field: ClauseTree.Field): QueryDefinition =
-        if (isNested(field)) NestedQueryDefinition(fieldPath(field), qb, ScoreMode.None) else qb
+        if (isNested(field)) NestedQueryDefinition(fieldPath(field), qb) else qb
     } // Materializer
 }

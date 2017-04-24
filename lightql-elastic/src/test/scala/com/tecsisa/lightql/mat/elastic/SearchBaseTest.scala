@@ -16,18 +16,18 @@ trait SearchBaseTest extends WordSpec with ElasticSugar with Eventually with Ela
 
   client.execute {
     createIndex("songs") mappings (
-      mapping("song") fields (
+      mapping("song") as (
         textField("name"),
         textField("artist"),
         textField("composer") analyzer KeywordAnalyzer,
         textField("genre") analyzer KeywordAnalyzer,
-        objectField("date") as (
+        objectField("date") fields (
           dateField("full"),
           intField("year")
         ),
         doubleField("price"),
-        nestedField("stats") as (
-          objectField("rate") as doubleField("stars")
+        nestedField("stats") fields (
+          objectField("rate") fields doubleField("stars")
         )
       )
     )
