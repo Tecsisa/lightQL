@@ -22,7 +22,10 @@ object Microsite extends AutoPlugin {
     micrositeAuthor := "Tecsisa",
     micrositeHomepage := "http://www.tecsisa.com",
     micrositeExtraMdFiles := Map(
-      file("CONTRIBUTING.md") -> ExtraMdFileConfig("contributing.md", "docs")
+      file("CONTRIBUTING.md") -> ExtraMdFileConfig("contributing.md",
+                                                   "docs",
+                                                   Map("title"    -> "\"Contributing\"",
+                                                       "position" -> "10"))
     ),
     micrositeGithubOwner := "Tecsisa",
     micrositeGithubRepo := "lightQL",
