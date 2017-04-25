@@ -6,8 +6,8 @@ object Version {
   final val FastParse           = "0.4.2"
   final val Elastic4s           = "5.2.10" // DO NOT UPGRADE TO 5.2.11 (see https://github.com/sksamuel/elastic4s/issues/819)
   final val NscalaTime          = "2.16.0"
-  final val Dsl                 = "0.1.10-SNAPSHOT"
-  final val ElasticMaterializer = "5.0.9-SNAPSHOT"
+  final val Dsl                 = "0.2.0"
+  final val ElasticMaterializer = "5.2.0"
 }
 
 object Library {
