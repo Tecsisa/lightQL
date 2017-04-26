@@ -4,11 +4,12 @@ lightQL is published to [Bintray jcenter][bintray-jcenter] and synchronized
 to [Maven Central][maven-central] (albeit the latter is not an exact science). The library is
 cross-built both for Scala 2.11 and 2.12.
 
+
 In order to work with the Elasticsearch materializer (the only available for the time being),
 just include the proper SBT configuration[^1sbt]:
 
 ```scala
-libraryDependencies += "com.tecsisa" %% "lightql-elastic" % "5.0.8"
+libraryDependencies += "com.tecsisa" %% "lightql-elastic" % "5.2.0"
 ```
 
 Then, open a SBT REPL session and try this sequence of commands:
