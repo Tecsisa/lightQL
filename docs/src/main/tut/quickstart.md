@@ -9,7 +9,7 @@ In order to work with the Elasticsearch materializer (the only available for the
 just include the proper SBT configuration[^1sbt]:
 
 ```scala
-libraryDependencies += "com.tecsisa" %% "lightql-elastic" % "5.4.0"
+libraryDependencies += "com.tecsisa" %% "lightql-elastic" % "5.4.1"
 ```
 
 Then, open a SBT REPL session and try this sequence of commands:
