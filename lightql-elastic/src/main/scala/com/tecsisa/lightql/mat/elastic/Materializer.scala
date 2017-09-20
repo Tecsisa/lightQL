@@ -67,10 +67,10 @@ object Materializer extends BuildableTermsQueryImplicits {
             }
 
           def buildQueryFromCombinedAndClause[V](
-            qb: BoolQueryDefinition,
-            lop: LogicOperator,
-            ct: ClauseTree,
-            c: Clause[V]
+              qb: BoolQueryDefinition,
+              lop: LogicOperator,
+              ct: ClauseTree,
+              c: Clause[V]
           ) = lop match {
             case `and` =>
               qb.must(Seq(loop(ct, BoolQueryDefinition()), buildQueryFromClause(c, qb)))
