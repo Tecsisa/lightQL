@@ -34,9 +34,10 @@ private[parser] case object ClauseTreeParse
     @see http://eli.thegreenplace.net/2012/08/02/parsing-expressions-by-precedence-climbing
    */
 
-  private def computeAtom(cfg: StringParseCtx,
-                          index: Int,
-                          depth: Int): (StringMutable[ClauseTree], Int) =
+  private def computeAtom(
+      cfg: StringParseCtx,
+      index: Int,
+      depth: Int): (StringMutable[ClauseTree], Int) =
     openParenLah.parseRec(cfg, index) match { // lookahead with no consumption
       case _: StringMutableSuccess[_] =>
         // left paren consumption
@@ -52,18 +53,20 @@ private[parser] case object ClauseTreeParse
         (clause.parseRec(cfg, index), depth)
     }
 
-  private def computeExpr(cfg: StringParseCtx,
-                          index: Int,
-                          depth: Int,
-                          minPrec: Int = 1): (StringMutable[ClauseTree], Int) =
+  private def computeExpr(
+      cfg: StringParseCtx,
+      index: Int,
+      depth: Int,
+      minPrec: Int = 1): (StringMutable[ClauseTree], Int) =
     computeAtom(cfg, index, depth) match {
       case (atom: StringMutableSuccess[ClauseTree], dep) =>
         @tailrec
-        def loop(lct: ClauseTree,
-                 idx: Int,
-                 tps: Set[StringParser[_]],
-                 cut: Boolean,
-                 dp: Int): (StringMutable[ClauseTree], Int) = {
+        def loop(
+            lct: ClauseTree,
+            idx: Int,
+            tps: Set[StringParser[_]],
+            cut: Boolean,
+            dp: Int): (StringMutable[ClauseTree], Int) = {
           def current(i: Int = idx, d: Int = dp) =
             (cfg.input.length, i) match {
               case (`i`, _) if d != 0 => (fail(cfg.failure, i, tps, cut), d)
@@ -82,11 +85,7 @@ private[parser] case object ClauseTreeParse
                   case (nextExpr, d) =>
                     nextExpr match {
                       case rct: StringMutableSuccess[ClauseTree] =>
-                        loop(computeOp(lct, op, rct.value),
-                             rct.index,
-                             rct.traceParsers,
-                             rct.cut,
-                             d)
+                        loop(computeOp(lct, op, rct.value), rct.index, rct.traceParsers, rct.cut, d)
                       case f: StringMutableFailure =>
                         (failMore(f, idxOp, cfg.logDepth), d)
                     }
