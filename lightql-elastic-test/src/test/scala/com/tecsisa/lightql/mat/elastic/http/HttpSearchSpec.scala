@@ -1,9 +1,24 @@
 /*
  * Copyright (C) 2016, 2017 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
  */
-package com.tecsisa.lightql.mat.elastic
+package com.tecsisa.lightql
+package mat
+package elastic
+package http
 
-class SearchSpec extends SearchBaseTest {
+import com.sksamuel.elastic4s.ElasticsearchClientUri
+import com.sksamuel.elastic4s.http.HttpClient
+import com.sksamuel.elastic4s.searches.SearchDefinition
+import org.scalatest.Matchers
+import org.scalatest.matchers.{ MatchResult, Matcher }
+
+import scala.concurrent.Await
+import scala.concurrent.duration.{ FiniteDuration, _ }
+
+class HttpSearchSpec extends BaseSearchSpec with Matchers {
+
+  implicit val http: HttpClient = HttpClient(
+    ElasticsearchClientUri("elasticsearch://" + node.ipAndPort))
 
   "a search query" should {
     "find exact results in queries with just a single clause" in {
@@ -107,9 +122,11 @@ class SearchSpec extends SearchBaseTest {
       search("songs") query q6 should haveTotalHits(3)
     }
     "find exact results in queries with multiple clauses and at least one of them having multiple values" in {
-      val q1 = q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] and genre = \"Classical\"")
+      val q1 =
+        q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] and genre = \"Classical\"")
       search("songs") query q1 should haveTotalHits(1)
-      val q2 = q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] or genre = \"Classical\"")
+      val q2 =
+        q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"] or genre = \"Classical\"")
       search("songs") query q2 should haveTotalHits(4)
       val q3 = q(
         "composer = [\"Johann Sebastian Bach\", \"Radiohead\"] and genre = [\"Classical\", \"Pop/Rock\"]"
@@ -144,4 +161,19 @@ class SearchSpec extends SearchBaseTest {
     }
   }
 
+  def haveTotalHits(expectedCount: Int)(
+      implicit client: HttpClient,
+      timeout: FiniteDuration = 10.seconds): Matcher[SearchDefinition] =
+    new Matcher[SearchDefinition] {
+      import com.sksamuel.elastic4s.http.ElasticDsl._
+      override def apply(left: SearchDefinition): MatchResult = {
+        val resp  = Await.result(client.execute(left), timeout)
+        val count = resp.totalHits
+        MatchResult(
+          count == expectedCount,
+          s"Search $left found $count totalHits",
+          s"Search $left found $count totalHits"
+        )
+      }
+    }
 }
