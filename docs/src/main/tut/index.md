@@ -9,7 +9,8 @@ section: "home"
 | Artifact | Maven Central |
 | :--- | :---: |
 | lightql-dsl | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-dsl_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-dsl_2.11) |
-| lightql-elastic | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-elastic_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-elastic_2.11) |
+| lightql-elastic-http | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-elastic-http_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-elastic-http_2.11) |
+| lightql-elastic-tcp | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-elastic-tcp_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-elastic-tcp_2.11) |
 
 lightQL a minimal external search DSL that compiles to a Scala AST and can be materialized to other target languages (a.k.a. APIs),
 e.g. the [Elasticsearch API][elastic-java-api]. Used in conjunction with [elastic4s][elastic4s-github-url],
