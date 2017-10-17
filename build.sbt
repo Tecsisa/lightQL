@@ -7,7 +7,7 @@ lazy val lightql = project
 lazy val docs = project
   .enablePlugins(MicrositesPlugin, NoPublish, PublishUnidoc)
   .disablePlugins(BintrayPlugin)
-  .dependsOn(elastic)
+  .dependsOn(`elastic-tcp`, `elastic-http`)
 
 lazy val dsl = project
   .in(file("lightql-dsl"))
