@@ -4,9 +4,9 @@ object Version {
   final val ScalaVersions       = Seq("2.12.3", "2.11.11")
   final val ScalaTest           = "3.0.4"
   final val FastParse           = "1.0.0"
-  final val Elastic4s           = "5.5.5"
+  final val Elastic4s           = "5.6.0"
   final val NscalaTime          = "2.16.0"
-  final val Log4j               = "2.8.2"
+  final val Log4j               = "2.9.1"
   final val Scalafmt            = "1.3.0"
   final val Dsl                 = "0.6.0-SNAPSHOT"
   final val ElasticMaterializer = "5.6.0-SNAPSHOT"
