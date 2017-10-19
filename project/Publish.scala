@@ -1,5 +1,6 @@
+import sbt.Keys._
 import sbt._
-import Keys._
+import sbtunidoc.ScalaUnidocPlugin
 
 /**
   * For projects that are not to be published.
@@ -32,30 +33,27 @@ object Publish extends AutoPlugin {
   )
 }
 
-object PublishUnidoc extends AutoPlugin {
-  import sbtunidoc.Plugin._
-  import sbtunidoc.Plugin.UnidocKeys._
-  import com.typesafe.sbt.site.util.SiteHelpers._
+object PublishDocs extends AutoPlugin {
   import Microsite.micrositeDocumentationBaseUrl
+  import com.typesafe.sbt.site.util.SiteHelpers._
   import microsites.MicrositesPlugin
   import microsites.MicrositesPlugin.autoImport._
+  import sbtunidoc.BaseUnidocPlugin.autoImport._
+  import sbtunidoc.ScalaUnidocPlugin.autoImport._
 
-  override def requires = plugins.JvmPlugin && MicrositesPlugin
+  override def requires = plugins.JvmPlugin && MicrositesPlugin && ScalaUnidocPlugin
 
-  def publishOnly(artifactType: String)(config: PublishConfiguration) = {
-    val newArts = config.artifacts.filterKeys(_.`type` == artifactType)
-    new PublishConfiguration(config.ivyFile,
-                             config.resolverName,
-                             newArts,
-                             config.checksums,
-                             config.logging)
+  def publishOnly(artifactType: String)(config: PublishConfiguration): PublishConfiguration = {
+    val newArts = config.artifacts.filter { case (art, _) => art.`type` == artifactType }
+    config.withArtifacts(newArts)
   }
 
-  override def projectSettings = unidocSettings ++ Seq(
+  override def projectSettings = Seq(
     doc in Compile := (doc in ScalaUnidoc).value,
     target in unidoc in ScalaUnidoc := crossTarget.value / "api",
     publishConfiguration ~= publishOnly(Artifact.DocType),
     publishLocalConfiguration ~= publishOnly(Artifact.DocType),
+    micrositeGitterChannel := false,
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), micrositeDocumentationBaseUrl)
   )
 }

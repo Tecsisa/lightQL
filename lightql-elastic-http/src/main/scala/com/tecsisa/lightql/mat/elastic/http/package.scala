@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2016, 2017 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
  */
+
 package com.tecsisa.lightql
 package mat
 package elastic

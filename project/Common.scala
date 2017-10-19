@@ -8,13 +8,11 @@ import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport.{ scalafmtOnCom
 
 object Common extends AutoPlugin {
 
-  final val FileHeader =
-    (
-      HeaderPattern.cStyleBlockComment,
-      """|/*
-         | * Copyright (C) 2016, 2017 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
-         | */
-         |""".stripMargin)
+  final val headerLic =
+    Some(
+      HeaderLicense.Custom(
+        "Copyright (C) 2016, 2017 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>")
+    )
 
   lazy val scalafmtSettings =
     Seq(
@@ -41,7 +39,7 @@ object Common extends AutoPlugin {
         "",
         url("https://github.com/Tecsisa/lightQL/graphs/contributors")),
       pomIncludeRepository := (_ => false),
-      licenses := Seq(("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))),
+      licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt"))),
       scalaVersion := crossScalaVersions.value.head,
       crossScalaVersions := Version.ScalaVersions,
       crossVersion := CrossVersion.binary,
@@ -61,7 +59,10 @@ object Common extends AutoPlugin {
       ),
       // show full stack traces and test case durations
       testOptions in Test += Tests.Argument("-oDF"),
-      headers := headers.value ++ Map("scala" -> FileHeader),
+      headerMappings := headerMappings.value ++ Map(
+        FileType.scala -> CommentStyle.CStyleBlockComment
+      ),
+      headerLicense := headerLic,
       // @see
       // http://stackoverflow.com/questions/26940253/in-sbt-how-do-you-override-scalacoptions-for-console-in-all-configurations
       scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Ywarn-unused-import")),

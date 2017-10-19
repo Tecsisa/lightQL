@@ -5,7 +5,7 @@ lazy val lightql = project
   .aggregate(dsl, elastic, `elastic-tcp`, `elastic-http`, `elastic-test`, docs)
 
 lazy val docs = project
-  .enablePlugins(MicrositesPlugin, NoPublish, PublishUnidoc)
+  .enablePlugins(NoPublish, PublishDocs)
   .disablePlugins(BintrayPlugin)
   .dependsOn(`elastic-tcp`, `elastic-http`)
 
