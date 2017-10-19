@@ -8,8 +8,8 @@ object Version {
   final val NscalaTime          = "2.16.0"
   final val Log4j               = "2.8.2"
   final val Scalafmt            = "1.3.0"
-  final val Dsl                 = "0.5.0-SNAPSHOT"
-  final val ElasticMaterializer = "5.5.0-SNAPSHOT"
+  final val Dsl                 = "0.5.0"
+  final val ElasticMaterializer = "5.5.0"
 }
 
 object Library {
