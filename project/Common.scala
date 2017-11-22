@@ -60,7 +60,7 @@ object Common extends AutoPlugin {
       // show full stack traces and test case durations
       testOptions in Test += Tests.Argument("-oDF"),
       headerMappings := headerMappings.value ++ Map(
-        FileType.scala -> CommentStyle.CStyleBlockComment
+        FileType.scala -> CommentStyle.cStyleBlockComment
       ),
       headerLicense := headerLic,
       // @see
