@@ -10,6 +10,7 @@ import com.sksamuel.elastic4s.searches.queries.BuildableTermsQueryImplicits
 import com.sksamuel.elastic4s.searches.queries.term.BuildableTermsQuery
 
 package object tcp extends ElasticMaterializerHelpers {
+  @deprecated("TCP will be removed in Elasticsearch 7. Use HTTP instead.", "6.0.0")
   implicit val elasticMaterializer: ElasticMaterializer =
     new ElasticMaterializer with BuildableTermsQueryImplicits {
       protected implicit val btq: BuildableTermsQuery[AnyRef] = AnyRefBuildableTermsQuery

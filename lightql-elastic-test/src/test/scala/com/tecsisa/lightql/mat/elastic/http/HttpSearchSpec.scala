@@ -7,8 +7,8 @@ package mat
 package elastic
 package http
 
-import com.sksamuel.elastic4s.ElasticsearchClientUri
 import com.sksamuel.elastic4s.http.HttpClient
+import com.sksamuel.elastic4s.http.search.SearchImplicits
 import com.sksamuel.elastic4s.searches.SearchDefinition
 import org.scalatest.Matchers
 import org.scalatest.matchers.{ MatchResult, Matcher }
@@ -17,9 +17,6 @@ import scala.concurrent.Await
 import scala.concurrent.duration.{ FiniteDuration, _ }
 
 class HttpSearchSpec extends BaseSearchSpec with Matchers {
-
-  implicit val http: HttpClient = HttpClient(
-    ElasticsearchClientUri("elasticsearch://" + node.ipAndPort))
 
   "a search query" should {
     "find exact results in queries with just a single clause" in {
@@ -165,13 +162,12 @@ class HttpSearchSpec extends BaseSearchSpec with Matchers {
   def haveTotalHits(expectedCount: Int)(
       implicit client: HttpClient,
       timeout: FiniteDuration = 10.seconds): Matcher[SearchDefinition] =
-    new Matcher[SearchDefinition] {
-      import com.sksamuel.elastic4s.http.ElasticDsl._
+    new Matcher[SearchDefinition] with SearchImplicits {
       override def apply(left: SearchDefinition): MatchResult = {
         val resp  = Await.result(client.execute(left), timeout)
-        val count = resp.totalHits
+        val count = resp.right.map(_.result.totalHits)
         MatchResult(
-          count == expectedCount,
+          count == Right(expectedCount),
           s"Search $left found $count totalHits",
           s"Search $left found $count totalHits"
         )
