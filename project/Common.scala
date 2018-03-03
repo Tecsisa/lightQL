@@ -11,7 +11,7 @@ object Common extends AutoPlugin {
   final val headerLic =
     Some(
       HeaderLicense.Custom(
-        "Copyright (C) 2016, 2017 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>")
+        "Copyright (C) 2016 - 2018 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>")
     )
 
   lazy val scalafmtSettings =
@@ -54,6 +54,14 @@ object Common extends AutoPlugin {
         "-Ywarn-unused-import", // only 2.11
         "-Xfuture" // prevents of future breaking changes
       ),
+      scalacOptions in (Compile, console) ~= (_.filterNot(Set(
+        "-Xfatal-warnings",
+        "-Xlint"
+      ))),
+      scalacOptions in (Test, console) ~= (_.filterNot(Set(
+        "-Xfatal-warnings",
+        "-Xlint"
+      ))),
       javacOptions ++= Seq(
         "-Xlint:unchecked"
       ),
