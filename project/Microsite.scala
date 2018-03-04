@@ -6,6 +6,7 @@ object Microsite extends AutoPlugin {
   import microsites.MicrositesPlugin
   import microsites.MicrositesPlugin.autoImport._
   import microsites._
+  import tut.TutPlugin.autoImport._
 
   override def requires = MicrositesPlugin
 
@@ -14,6 +15,11 @@ object Microsite extends AutoPlugin {
   val micrositeDocumentationBaseUrl = settingKey[String]("Base url for documentation")
 
   override def projectSettings = Seq(
+    scalacOptions in Tut ~= (_.filterNot(Set(
+      "-Xfatal-warnings",
+      "-Xlint",
+      "-Ywarn-unused-import"
+    ))),
     micrositeName := "lightQL",
     micrositeDescription := "A minimal external search DSL that compiles to Scala",
     micrositeBaseUrl := "/lightQL",
