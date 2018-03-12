@@ -8,7 +8,7 @@ package elastic
 
 import com.sksamuel.elastic4s.searches.queries.matches.MatchQueryDefinition
 import com.sksamuel.elastic4s.searches.queries.term.{ BuildableTermsQuery, TermQueryDefinition, TermsQueryDefinition }
-import com.sksamuel.elastic4s.searches.queries.{ BoolQueryDefinition, NestedQueryDefinition, QueryDefinition, RangeQueryDefinition }
+import com.sksamuel.elastic4s.searches.queries.{ BoolQueryDefinition, NestedQueryDefinition, QueryDefinition, RangeQuery }
 import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
 import com.tecsisa.lightql.ast.{ ClauseTree, LogicOperator, Query, EqualityOperator => EqOp, MatchingOperator => MatchOp, NumericOperator => NumOp }
@@ -40,19 +40,19 @@ trait ElasticMaterializer extends Materializer[QueryDefinition] {
             qb.not(nestQuery(MatchQueryDefinition(stdField(c.field), c.value), c.field))
           case NumOp.< =>
             qb.filter(
-              nestQuery(RangeQueryDefinition(stdField(c.field)).lt(c.value.toString), c.field)
+              nestQuery(RangeQuery(stdField(c.field)).lt(c.value.toString), c.field)
             )
           case NumOp.<= =>
             qb.filter(
-              nestQuery(RangeQueryDefinition(stdField(c.field)).lte(c.value.toString), c.field)
+              nestQuery(RangeQuery(stdField(c.field)).lte(c.value.toString), c.field)
             )
           case NumOp.> =>
             qb.filter(
-              nestQuery(RangeQueryDefinition(stdField(c.field)).gt(c.value.toString), c.field)
+              nestQuery(RangeQuery(stdField(c.field)).gt(c.value.toString), c.field)
             )
           case NumOp.>= =>
             qb.filter(
-              nestQuery(RangeQueryDefinition(stdField(c.field)).gte(c.value.toString), c.field)
+              nestQuery(RangeQuery(stdField(c.field)).gte(c.value.toString), c.field)
             )
           case _ => qb
         }
@@ -77,11 +77,11 @@ trait ElasticMaterializer extends Materializer[QueryDefinition] {
             case MatchOp.~  => MatchQueryDefinition(stdField(field), value)
             case MatchOp.!~ => qb.not(MatchQueryDefinition(stdField(field), value))
             case NumOp.< =>
-              RangeQueryDefinition(stdField(field)).lt(value.toString)
-            case NumOp.<= => RangeQueryDefinition(stdField(field)).lte(value.toString)
+              RangeQuery(stdField(field)).lt(value.toString)
+            case NumOp.<= => RangeQuery(stdField(field)).lte(value.toString)
             case NumOp.> =>
-              RangeQueryDefinition(stdField(field)).gt(value.toString)
-            case NumOp.>= => RangeQueryDefinition(stdField(field)).gte(value.toString)
+              RangeQuery(stdField(field)).gt(value.toString)
+            case NumOp.>= => RangeQuery(stdField(field)).gte(value.toString)
             case _        => sys.error("Impossible")
           }
           if (isNested(field))
