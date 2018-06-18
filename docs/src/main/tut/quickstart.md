@@ -9,11 +9,11 @@ In order to work with either the HTTP or TCP Elasticsearch materializer (the onl
 just include the proper SBT configuration[^1sbt]:
 
 ```scala
-libraryDependencies += "com.tecsisa" %% "lightql-elastic-http" % "6.2.1"
+libraryDependencies += "com.tecsisa" %% "lightql-elastic-http" % "6.2.2"
 ```
 or
 ```scala
-libraryDependencies += "com.tecsisa" %% "lightql-elastic-tcp" % "6.2.1"
+libraryDependencies += "com.tecsisa" %% "lightql-elastic-tcp" % "6.2.2"
 ```
 
 Then, open a SBT REPL session and try this sequence of commands:
