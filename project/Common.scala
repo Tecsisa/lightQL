@@ -4,7 +4,7 @@ import sbt.plugins.JvmPlugin
 import de.heikoseeberger.sbtheader._
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import com.typesafe.sbt.GitPlugin
-import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport.{ scalafmtOnCompile, scalafmtVersion }
+import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
 
 object Common extends AutoPlugin {
 
@@ -12,12 +12,6 @@ object Common extends AutoPlugin {
     Some(
       HeaderLicense.Custom(
         "Copyright (C) 2016 - 2018 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>")
-    )
-
-  lazy val scalafmtSettings =
-    Seq(
-      scalafmtOnCompile in ThisBuild := true,
-      scalafmtVersion in ThisBuild := Version.Scalafmt
     )
 
   override def requires = JvmPlugin && GitPlugin && HeaderPlugin
@@ -54,14 +48,16 @@ object Common extends AutoPlugin {
         "-Ywarn-unused-import", // only 2.11
         "-Xfuture" // prevents of future breaking changes
       ),
-      scalacOptions in (Compile, console) ~= (_.filterNot(Set(
-        "-Xfatal-warnings",
-        "-Xlint"
-      ))),
-      scalacOptions in (Test, console) ~= (_.filterNot(Set(
-        "-Xfatal-warnings",
-        "-Xlint"
-      ))),
+      scalacOptions in (Compile, console) ~= (_.filterNot(
+        Set(
+          "-Xfatal-warnings",
+          "-Xlint"
+        ))),
+      scalacOptions in (Test, console) ~= (_.filterNot(
+        Set(
+          "-Xfatal-warnings",
+          "-Xlint"
+        ))),
       javacOptions ++= Seq(
         "-Xlint:unchecked"
       ),
@@ -81,6 +77,8 @@ object Common extends AutoPlugin {
       resolvers ++= Seq(
         Resolver.sonatypeRepo("releases"),
         "jgit-repo" at "http://download.eclipse.org/jgit/maven" // needed by tut
-      )
-    ) ++ scalafmtSettings
+      ),
+      // Scalafmt settings
+      scalafmtOnCompile in ThisBuild := true
+    )
 }
