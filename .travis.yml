@@ -26,3 +26,6 @@ env:
 
 before_script:
   - sudo chmod +x /usr/local/bin/sbt
+
+before_install:
+- docker run -d -p 9200:9200 -p 9300:9300 -e "path.repo=/tmp" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.3.2

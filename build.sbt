@@ -2,12 +2,12 @@ lazy val lightql = project
   .in(file("."))
   .enablePlugins(NoPublish)
   .disablePlugins(BintrayPlugin)
-  .aggregate(dsl, elastic, `elastic-tcp`, `elastic-http`, `elastic-test`, docs)
+  .aggregate(dsl, elastic, `elastic-http`, `elastic-test`, docs)
 
 lazy val docs = project
   .enablePlugins(NoPublish, PublishDocs)
   .disablePlugins(BintrayPlugin)
-  .dependsOn(`elastic-tcp`, `elastic-http`)
+  .dependsOn(`elastic-http`)
 
 lazy val dsl = project
   .in(file("lightql-dsl"))
@@ -35,18 +35,6 @@ lazy val elastic = project
   )
   .dependsOn(dsl)
 
-lazy val `elastic-tcp` = project
-  .in(file("lightql-elastic-tcp"))
-  .enablePlugins(AutomateHeaderPlugin)
-  .settings(
-    name := "lightql-elastic-tcp",
-    version := Version.ElasticMaterializer,
-    libraryDependencies ++= Seq(
-      Library.elastic4sTcp
-    )
-  )
-  .dependsOn(elastic)
-
 lazy val `elastic-http` = project
   .in(file("lightql-elastic-http"))
   .enablePlugins(AutomateHeaderPlugin)
@@ -72,4 +60,4 @@ lazy val `elastic-test` = project
     ),
     fork in Test := true
   )
-  .dependsOn(`elastic-tcp`, `elastic-http`)
+  .dependsOn(`elastic-http`)
