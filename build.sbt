@@ -55,6 +55,7 @@ lazy val `elastic-test` = project
     version := Version.ElasticMaterializer,
     libraryDependencies ++= Seq(
       Library.elastic4sTestkit % Test,
+      Library.log4jApi         % Test,
       Library.log4jCore        % Test,
       Library.log4jSlfj4Impl   % Test
     ),

@@ -18,6 +18,7 @@ object Library {
   val elastic4sTestkit = "com.sksamuel.elastic4s"   %% "elastic4s-testkit" % Version.Elastic4s
   val nscalaTime       = "com.github.nscala-time"   %% "nscala-time"       % Version.NscalaTime
   val scalaTest        = "org.scalatest"            %% "scalatest"         % Version.ScalaTest
+  val log4jApi         = "org.apache.logging.log4j" % "log4j-api"          % Version.Log4j
   val log4jCore        = "org.apache.logging.log4j" % "log4j-core"         % Version.Log4j
   val log4jSlfj4Impl   = "org.apache.logging.log4j" % "log4j-slf4j-impl"   % Version.Log4j
 }
