@@ -23,6 +23,8 @@ class HttpSearchSpec extends BaseSearchSpec with Matchers {
       search("songs") query q("composer = \"Johann Sebastian Bach\"") should haveTotalHits(1)
       search("songs") query q("genre != \"Classical\"") should haveTotalHits(7)
       search("songs") query q("date.full = 2016-02-06") should haveTotalHits(1)
+      search("songs") query q("date.localDate = 2016-02-06") should haveTotalHits(1)
+      search("songs") query q("date.yearMonth = 2016-02") should haveTotalHits(1)
       search("songs") query q("stats->rate.stars = 5.0") should haveTotalHits(2)
     }
     "find exact results in queries with multiple values" in {
@@ -116,8 +118,10 @@ class HttpSearchSpec extends BaseSearchSpec with Matchers {
       search("songs") query q4 should haveTotalHits(1)
       val q5 = q("date.full <= 2016-01-01 and date.full >= 1975-10-06")
       search("songs") query q5 should haveTotalHits(5)
-      val q6 = q("price > 0.99 and stats->rate.stars < 4.5 and date.year >= 2000")
-      search("songs") query q6 should haveTotalHits(3)
+      val q6 = q("date.localDate <= 2016-01-01 and date.localDate >= 1975-10-06")
+      search("songs") query q6 should haveTotalHits(5)
+      val q7 = q("price > 0.99 and stats->rate.stars < 4.5 and date.year >= 2000")
+      search("songs") query q7 should haveTotalHits(3)
     }
     "find exact results in queries with multiple clauses and at least one of them having multiple values" in {
       val q1 =
