@@ -12,7 +12,7 @@ import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
 import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.lightql.ast.Query
 import org.joda.time.DateTimeZone.UTC
-import org.joda.time.DateTime
+import org.joda.time.{ DateTime, LocalDate, YearMonth }
 import org.scalatest.WordSpec
 
 class LightqlParserSpec extends WordSpec with QueryMatchers {
@@ -33,7 +33,12 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
     }
     "parse: `foo = 2001-07-12`" in {
       "foo = 2001-07-12" should parseTo {
-        Query(Clause("foo", EqOp.`=`, new DateTime(2001, 7, 12, 0, 0, 0, UTC)))
+        Query(Clause("foo", EqOp.`=`, new LocalDate(2001, 7, 12)))
+      }
+    }
+    "parse: `foo = 2001-07`" in {
+      "foo =  2001-07" should parseTo {
+        Query(Clause("foo", EqOp.`=`, new YearMonth(2001, 7)))
       }
     }
     "parse: `foo = 2001-07-12T12:10:30.002+02:00`" in {
@@ -81,6 +86,15 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
     "parse: `foo = 25 and bar = 100`" in {
       "foo = 25 and bar = 100" should parseTo {
         Query(CombinedClause(Clause("foo", EqOp.`=`, 25), and, Clause("bar", EqOp.`=`, 100)))
+      }
+    }
+    "parse: `foo = 2001-07 and bar = 2001-07-12T12:10:30.002+02:00`" in {
+      "foo = 2001-07 and bar = 2001-07-12T12:10:30.002+02:00" should parseTo {
+        Query(
+          CombinedClause(
+            Clause("foo", EqOp.`=`, new YearMonth(2001, 7)),
+            and,
+            Clause("bar", EqOp.`=`, new DateTime(2001, 7, 12, 10, 10, 30, 2, UTC))))
       }
     }
     "parse: `(foo = 25 and (bar = 100))`" in {

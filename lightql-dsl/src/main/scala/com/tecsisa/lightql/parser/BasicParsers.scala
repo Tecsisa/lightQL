@@ -29,13 +29,15 @@ private[parser] trait BasicParsers extends Helpers {
     P("-".? ~ integral ~ "." ~ integral.rep(min = 1, max = 16)).!.map(_.toDouble)
 
   // A parser for dates (yyyy-MM-dd || yyyy-MM-ddTHH:mm:ss)
-  protected[this] val dMHms      = P(CharIn('0' to '9').rep(min = 2, max = 2))
-  protected[this] val year       = P(CharIn('0' to '9').rep(min = 4, max = 4))
-  protected[this] val seconds    = P(dMHms ~ ("." ~ CharIn('0' to '9').rep(max = 3)).?)
-  protected[this] val time       = P("T" ~ dMHms ~ ":" ~ dMHms ~ ":" ~ seconds)
-  protected[this] val tz         = P((("-" | "+") ~ dMHms ~ ":" ~ dMHms) | "Z")
-  protected[this] val dateFormat = P(year ~ "-" ~ dMHms ~ "-" ~ dMHms ~ time.? ~ tz.?)
-  protected[this] val date       = dateFormat.!.map(parseDate)
+  protected[this] val dMHms          = P(CharIn('0' to '9').rep(min = 2, max = 2))
+  protected[this] val year           = P(CharIn('0' to '9').rep(min = 4, max = 4))
+  protected[this] val seconds        = P(dMHms ~ ("." ~ CharIn('0' to '9').rep(max = 3)).?)
+  protected[this] val time           = P("T" ~ dMHms ~ ":" ~ dMHms ~ ":" ~ seconds)
+  protected[this] val tz             = P((("-" | "+") ~ dMHms ~ ":" ~ dMHms) | "Z")
+  protected[this] val dateTimeFormat = P(year ~ "-" ~ dMHms ~ "-" ~ dMHms ~ time ~ tz.?)
+  protected[this] val dateTime       = dateTimeFormat.!.map(parseDateTime)
+  protected[this] val localDate      = P(year ~ "-" ~ dMHms ~ "-" ~ dMHms).!.map(parseLocalDate)
+  protected[this] val yearMonth      = P(year ~ "-" ~ dMHms).!.map(parseYearMonth)
 
   // A sequence of chars
   protected[this] val charSeq = P(CharIn('A' to 'Z', 'a' to 'z', '0' to '9', "_-"))
