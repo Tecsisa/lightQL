@@ -71,22 +71,20 @@ trait ElasticMaterializer extends Materializer[QueryDefinition] {
 
       ct match {
         case Clause(field, op, value) =>
-          val query = op match {
-            case EqOp.`=`   => buildTermQueryFromClause(field, value)
-            case EqOp.!=    => qb.not(buildTermQueryFromClause(field, value))
-            case MatchOp.~  => MatchQueryDefinition(stdField(field), value)
-            case MatchOp.!~ => qb.not(MatchQueryDefinition(stdField(field), value))
+          op match {
+            case EqOp.`=`  => nestQuery(buildTermQueryFromClause(field, value), field)
+            case EqOp.!=   => qb.not(nestQuery(buildTermQueryFromClause(field, value), field))
+            case MatchOp.~ => nestQuery(MatchQueryDefinition(stdField(field), value), field)
+            case MatchOp.!~ =>
+              qb.not(nestQuery(MatchQueryDefinition(stdField(field), value), field))
             case NumOp.< =>
-              RangeQuery(stdField(field)).lt(value.toString)
-            case NumOp.<= => RangeQuery(stdField(field)).lte(value.toString)
+              nestQuery(RangeQuery(stdField(field)).lt(value.toString), field)
+            case NumOp.<= => nestQuery(RangeQuery(stdField(field)).lte(value.toString), field)
             case NumOp.> =>
-              RangeQuery(stdField(field)).gt(value.toString)
-            case NumOp.>= => RangeQuery(stdField(field)).gte(value.toString)
+              nestQuery(RangeQuery(stdField(field)).gt(value.toString), field)
+            case NumOp.>= => nestQuery(RangeQuery(stdField(field)).gte(value.toString), field)
             case _        => sys.error("Impossible")
           }
-          if (isNested(field))
-            NestedQueryDefinition(fieldPath(field), query)
-          else query
         case CombinedClause(lct, lop, rct) =>
           (lct, rct) match {
             case (_: CombinedClause, _: CombinedClause) =>
