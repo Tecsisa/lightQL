@@ -37,7 +37,8 @@ trait BaseSearchSpec
           doubleField("price"),
           nestedField("stats") fields (
             objectField("rate") fields doubleField("stars")
-          )
+          ),
+          nestedField("tags") fields keywordField("code")
         )
       )
     }.await
@@ -82,7 +83,8 @@ trait BaseSearchSpec
             "yearMonth" -> "1959-08",
             "year"      -> 1959),
           "price" -> 1.99,
-          "stats" -> Map("rate" -> Map("stars" -> 5.0))
+          "stats" -> Map("rate" -> Map("stars" -> 5.0)),
+          "tags"  -> List(Map("code" -> "INSTRUMENTAL"))
         ),
         indexInto("songs/song") fields (
           "name"     -> "La Isla Bonita",
@@ -147,7 +149,8 @@ trait BaseSearchSpec
             "yearMonth" -> "1955-05",
             "year"      -> 1955),
           "price" -> 0.99,
-          "stats" -> Map("rate" -> Map("stars" -> 3.0))
+          "stats" -> Map("rate" -> Map("stars" -> 3.0)),
+          "tags"  -> List(Map("code" -> "BAROQUE"), Map("code" -> "INSTRUMENTAL"))
         ),
         indexInto("songs/song") fields (
           "name"     -> "Money For Nothing",
