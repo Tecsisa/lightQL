@@ -6,38 +6,38 @@ package com.tecsisa.lightql
 package mat
 package elastic
 
-import com.sksamuel.elastic4s.searches.queries.matches.MatchQueryDefinition
-import com.sksamuel.elastic4s.searches.queries.term.{ BuildableTermsQuery, TermQueryDefinition, TermsQueryDefinition }
-import com.sksamuel.elastic4s.searches.queries.{ BoolQueryDefinition, NestedQueryDefinition, QueryDefinition, RangeQuery }
+import com.sksamuel.elastic4s.searches.queries.matches.MatchQuery
+import com.sksamuel.elastic4s.searches.queries.term.{ BuildableTermsQuery, TermQuery, TermsQuery }
+import com.sksamuel.elastic4s.searches.queries.{ BoolQuery, NestedQuery, Query => EsQuery, RangeQuery }
 import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
 import com.tecsisa.lightql.ast.{ ClauseTree, LogicOperator, Query, EqualityOperator => EqOp, MatchingOperator => MatchOp, NumericOperator => NumOp }
 
-trait ElasticMaterializer extends Materializer[QueryDefinition] {
+trait ElasticMaterializer extends Materializer[EsQuery] {
 
   protected implicit def btq: BuildableTermsQuery[AnyRef]
 
-  def materialize(query: Query): QueryDefinition = {
+  def materialize(query: Query): EsQuery = {
 
-    def loop(ct: ClauseTree, qb: BoolQueryDefinition): QueryDefinition = {
+    def loop(ct: ClauseTree, qb: BoolQuery): EsQuery = {
 
-      def buildTermQueryFromClause[V](field: ClauseTree.Field, value: V): QueryDefinition =
+      def buildTermQueryFromClause[V](field: ClauseTree.Field, value: V): EsQuery =
         value match {
           case seq: Iterable[AnyRef] @unchecked =>
-            TermsQueryDefinition(stdField(field), seq)
-          case _ => TermQueryDefinition(stdField(field), value)
+            TermsQuery(stdField(field), seq)
+          case _ => TermQuery(stdField(field), value)
         }
 
-      def buildQueryFromClause[V](c: Clause[V], qb: BoolQueryDefinition): BoolQueryDefinition =
+      def buildQueryFromClause[V](c: Clause[V], qb: BoolQuery): BoolQuery =
         c.op match {
           case EqOp.`=` =>
             qb.must(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
           case EqOp.!= =>
             qb.not(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
           case MatchOp.~ =>
-            qb.must(nestQuery(MatchQueryDefinition(stdField(c.field), c.value), c.field))
+            qb.must(nestQuery(MatchQuery(stdField(c.field), c.value), c.field))
           case MatchOp.!~ =>
-            qb.not(nestQuery(MatchQueryDefinition(stdField(c.field), c.value), c.field))
+            qb.not(nestQuery(MatchQuery(stdField(c.field), c.value), c.field))
           case NumOp.< =>
             qb.filter(
               nestQuery(RangeQuery(stdField(c.field)).lt(c.value.toString), c.field)
@@ -58,13 +58,13 @@ trait ElasticMaterializer extends Materializer[QueryDefinition] {
         }
 
       def buildQueryFromCombinedAndClause[V](
-          qb: BoolQueryDefinition,
+          qb: BoolQuery,
           lop: LogicOperator,
           ct: ClauseTree,
           c: Clause[V]
       ) = lop match {
         case `and` =>
-          qb.must(Seq(loop(ct, BoolQueryDefinition()), buildQueryFromClause(c, qb)))
+          qb.must(Seq(loop(ct, BoolQuery()), buildQueryFromClause(c, qb)))
         case `or` =>
           qb.should(Seq(loop(ct, qb), buildQueryFromClause(c, qb)))
       }
@@ -74,9 +74,9 @@ trait ElasticMaterializer extends Materializer[QueryDefinition] {
           op match {
             case EqOp.`=`  => nestQuery(buildTermQueryFromClause(field, value), field)
             case EqOp.!=   => qb.not(nestQuery(buildTermQueryFromClause(field, value), field))
-            case MatchOp.~ => nestQuery(MatchQueryDefinition(stdField(field), value), field)
+            case MatchOp.~ => nestQuery(MatchQuery(stdField(field), value), field)
             case MatchOp.!~ =>
-              qb.not(nestQuery(MatchQueryDefinition(stdField(field), value), field))
+              qb.not(nestQuery(MatchQuery(stdField(field), value), field))
             case NumOp.< =>
               nestQuery(RangeQuery(stdField(field)).lt(value.toString), field)
             case NumOp.<= => nestQuery(RangeQuery(stdField(field)).lte(value.toString), field)
@@ -88,10 +88,10 @@ trait ElasticMaterializer extends Materializer[QueryDefinition] {
         case CombinedClause(lct, lop, rct) =>
           (lct, rct) match {
             case (_: CombinedClause, _: CombinedClause) =>
-              def f(q: QueryDefinition) = lop match {
+              def f(q: EsQuery) = lop match {
                 case `and` => qb.must(q); case `or` => qb.should(q)
               }
-              qb.filter(Seq(lct, rct).map(x => f(loop(x, BoolQueryDefinition()))))
+              qb.filter(Seq(lct, rct).map(x => f(loop(x, BoolQuery()))))
             case (_: CombinedClause, c: Clause[_]) =>
               buildQueryFromCombinedAndClause(qb, lop, lct, c)
             case (c: Clause[_], _: CombinedClause) =>
@@ -106,7 +106,7 @@ trait ElasticMaterializer extends Materializer[QueryDefinition] {
           } // combined clause pattern matching
       } // main pattern matching
     } // loop
-    loop(query.ct, BoolQueryDefinition())
+    loop(query.ct, BoolQuery())
   } // Materializer
 
   private[this] def stdField(field: ClauseTree.Field): ClauseTree.Field =
@@ -117,7 +117,7 @@ trait ElasticMaterializer extends Materializer[QueryDefinition] {
   private[this] def fieldPath(field: ClauseTree.Field): String =
     stdField(field.dropRight(field.split("->").last.length + 2))
 
-  private[this] def nestQuery(qb: QueryDefinition, field: ClauseTree.Field): QueryDefinition =
-    if (isNested(field)) NestedQueryDefinition(fieldPath(field), qb) else qb
+  private[this] def nestQuery(qb: EsQuery, field: ClauseTree.Field): EsQuery =
+    if (isNested(field)) NestedQuery(fieldPath(field), qb) else qb
 
 }

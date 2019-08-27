@@ -7,21 +7,20 @@ package mat
 package elastic
 
 import com.sksamuel.elastic4s.analyzers.KeywordAnalyzer
-import com.sksamuel.elastic4s.testkit.{ ClassloaderLocalNodeProvider, HttpElasticSugar }
+import com.sksamuel.elastic4s.testkit.{ DockerTests, ElasticMatchers, ElasticSugar }
 import com.tecsisa.lightql.ast.Query
 import com.tecsisa.lightql.parser.LightqlParser
 import org.scalatest._
-import org.scalatest.concurrent.Eventually
 
 trait BaseSearchSpec
     extends WordSpec
-    with Eventually
-    with HttpElasticSugar
-    with ClassloaderLocalNodeProvider
+    with ElasticSugar
+    with ElasticMatchers
+    with DockerTests
     with BeforeAndAfterAll {
 
   override protected def beforeAll(): Unit = {
-    http.execute {
+    client.execute {
       createIndex("songs") mappings (
         mapping("song") as (
           textField("name"),
@@ -43,7 +42,7 @@ trait BaseSearchSpec
       )
     }.await
 
-    http.execute {
+    client.execute {
       bulk(
         indexInto("songs/song") fields (
           "name"     -> "Paranoid Android",
@@ -184,6 +183,9 @@ trait BaseSearchSpec
     refresh("songs")
     blockUntilCount(10, "songs")
   }
+
+  override protected def afterAll(): Unit =
+    deleteIdx("songs")
 
   protected def q(qs: String): Query = LightqlParser.parse(qs).get.value
 

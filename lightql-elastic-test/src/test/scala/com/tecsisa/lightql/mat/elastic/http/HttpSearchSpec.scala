@@ -6,17 +6,11 @@ package com.tecsisa.lightql
 package mat
 package elastic
 package http
+import com.sksamuel.elastic4s.http.ElasticClient
 
-import com.sksamuel.elastic4s.http.HttpClient
-import com.sksamuel.elastic4s.http.search.SearchImplicits
-import com.sksamuel.elastic4s.searches.SearchDefinition
-import org.scalatest.Matchers
-import org.scalatest.matchers.{ MatchResult, Matcher }
+class HttpSearchSpec extends BaseSearchSpec {
 
-import scala.concurrent.Await
-import scala.concurrent.duration.{ FiniteDuration, _ }
-
-class HttpSearchSpec extends BaseSearchSpec with Matchers {
+  implicit val _client: ElasticClient = client
 
   "a search query" should {
     "find exact results in queries with just a single clause" in {
@@ -164,19 +158,4 @@ class HttpSearchSpec extends BaseSearchSpec with Matchers {
       search("songs") query q10 should haveTotalHits(8)
     }
   }
-
-  def haveTotalHits(expectedCount: Int)(
-      implicit client: HttpClient,
-      timeout: FiniteDuration = 10.seconds): Matcher[SearchDefinition] =
-    new Matcher[SearchDefinition] with SearchImplicits {
-      override def apply(left: SearchDefinition): MatchResult = {
-        val resp  = Await.result(client.execute(left), timeout)
-        val count = resp.right.map(_.result.totalHits)
-        MatchResult(
-          count == Right(expectedCount),
-          s"Search $left found $count totalHits",
-          s"Search $left found $count totalHits"
-        )
-      }
-    }
 }
