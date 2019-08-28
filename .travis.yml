@@ -9,6 +9,8 @@ scala:
 jdk:
   - oraclejdk8
 
+dist: trusty
+
 deploy:
   provider: script
   script:
