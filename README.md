@@ -6,7 +6,6 @@
 | :--- | :---: |
 | lightql-dsl | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-dsl_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-dsl_2.12) |
 | lightql-elastic-http | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-elastic-http_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-elastic-http_2.12) |
-| lightql-elastic-tcp | [![Maven Central](https://img.shields.io/maven-central/v/com.tecsisa/lightql-elastic-tcp_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.tecsisa/lightql-elastic-tcp_2.12) |
 
 **lightQL** is a minimal external search DSL that compiles to Scala. Used in conjunction
 with [elastic4s](https://github.com/sksamuel/elastic4s),
