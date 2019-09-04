@@ -6,7 +6,7 @@ package com.tecsisa.lightql
 package mat
 package elastic
 
-import com.sksamuel.elastic4s.analyzers.KeywordAnalyzer
+import com.sksamuel.elastic4s.requests.analyzers.KeywordAnalyzer
 import com.sksamuel.elastic4s.testkit.{ DockerTests, ElasticMatchers, ElasticSugar }
 import com.tecsisa.lightql.ast.Query
 import com.tecsisa.lightql.parser.LightqlParser
@@ -21,30 +21,28 @@ trait BaseSearchSpec
 
   override protected def beforeAll(): Unit = {
     client.execute {
-      createIndex("songs") mappings (
-        mapping("song") as (
-          textField("name"),
-          textField("artist"),
-          textField("composer") analyzer KeywordAnalyzer,
-          textField("genre") analyzer KeywordAnalyzer,
-          objectField("date") fields (
-            dateField("full"),
-            dateField("localDate").format("strict_year_month_day"),
-            dateField("yearMonth").format("strict_year_month"),
-            intField("year")
-          ),
-          doubleField("price"),
-          nestedField("stats") fields (
-            objectField("rate") fields doubleField("stars")
-          ),
-          nestedField("tags") fields keywordField("code")
-        )
+      createIndex("songs") mapping properties(
+        textField("name"),
+        textField("artist"),
+        textField("composer") analyzer KeywordAnalyzer,
+        textField("genre") analyzer KeywordAnalyzer,
+        objectField("date") fields (
+          dateField("full"),
+          dateField("localDate").format("strict_year_month_day"),
+          dateField("yearMonth").format("strict_year_month"),
+          intField("year")
+        ),
+        doubleField("price"),
+        nestedField("stats") fields (
+          objectField("rate") fields doubleField("stars")
+        ),
+        nestedField("tags") fields keywordField("code")
       )
     }.await
 
     client.execute {
       bulk(
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "Paranoid Android",
           "artist"   -> "Radiohead",
           "composer" -> "Radiohead",
@@ -57,7 +55,7 @@ trait BaseSearchSpec
           "price" -> 1.26,
           "stats" -> Map("rate" -> Map("stars" -> 4.5))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "Sinfonía núm. 1 en Do mayor, Op. 21. I Adagio molto - Allegro con brio",
           "artist"   -> "Simon Rattle // Berliner Philharmoniker",
           "composer" -> "Ludwig van Beethoven",
@@ -71,7 +69,7 @@ trait BaseSearchSpec
           "price" -> 2.45,
           "stats" -> Map("rate" -> Map("stars" -> 3.5))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "So What",
           "artist"   -> "Miles Davis",
           "composer" -> "Miles Davis",
@@ -85,7 +83,7 @@ trait BaseSearchSpec
           "stats" -> Map("rate" -> Map("stars" -> 5.0)),
           "tags"  -> List(Map("code" -> "INSTRUMENTAL"))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "La Isla Bonita",
           "artist"   -> "Madonna",
           "composer" -> "Patrick Leonard",
@@ -98,7 +96,7 @@ trait BaseSearchSpec
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 2.75))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "Symphony No.8 in E flat - \"Symphony of a Thousand\" Part One: Hymnus",
           "artist"   -> "Georg Solti // Chicago Symphony Orchestra",
           "composer" -> "Gustav Mahler",
@@ -111,7 +109,7 @@ trait BaseSearchSpec
           "price" -> 2.11,
           "stats" -> Map("rate" -> Map("stars" -> 3.25))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "Do You Realize??",
           "artist"   -> "Flaming Lips",
           "composer" -> "Wayne Coyne",
@@ -124,7 +122,7 @@ trait BaseSearchSpec
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 4.25))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "Don't Know Why",
           "artist"   -> "Norah Jones",
           "composer" -> "Jesse Harris",
@@ -137,7 +135,7 @@ trait BaseSearchSpec
           "price" -> 1.19,
           "stats" -> Map("rate" -> Map("stars" -> 1.5))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "Goldberg Variations: Aria",
           "artist"   -> "Glenn Gould",
           "composer" -> "Johann Sebastian Bach",
@@ -151,7 +149,7 @@ trait BaseSearchSpec
           "stats" -> Map("rate" -> Map("stars" -> 3.0)),
           "tags"  -> List(Map("code" -> "BAROQUE"), Map("code" -> "INSTRUMENTAL"))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "Money For Nothing",
           "artist"   -> "Dire Straits",
           "composer" -> "Mark Knopfler",
@@ -164,7 +162,7 @@ trait BaseSearchSpec
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 3.5))
         ),
-        indexInto("songs/song") fields (
+        indexInto("songs") fields (
           "name"     -> "Smell Like Teen Spirit",
           "artist"   -> "Nirvana",
           "composer" -> "Nirvana",

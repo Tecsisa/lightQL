@@ -6,16 +6,14 @@ package com.tecsisa.lightql
 package mat
 package elastic
 
-import com.sksamuel.elastic4s.searches.queries.matches.MatchQuery
-import com.sksamuel.elastic4s.searches.queries.term.{ BuildableTermsQuery, TermQuery, TermsQuery }
-import com.sksamuel.elastic4s.searches.queries.{ BoolQuery, NestedQuery, Query => EsQuery, RangeQuery }
+import com.sksamuel.elastic4s.requests.searches.queries.matches.MatchQuery
+import com.sksamuel.elastic4s.requests.searches.queries.term.{ TermQuery, TermsQuery }
+import com.sksamuel.elastic4s.requests.searches.queries.{ BoolQuery, NestedQuery, RangeQuery, Query => EsQuery }
 import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
 import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
 import com.tecsisa.lightql.ast.{ ClauseTree, LogicOperator, Query, EqualityOperator => EqOp, MatchingOperator => MatchOp, NumericOperator => NumOp }
 
 trait ElasticMaterializer extends Materializer[EsQuery] {
-
-  protected implicit def btq: BuildableTermsQuery[AnyRef]
 
   def materialize(query: Query): EsQuery = {
 

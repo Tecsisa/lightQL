@@ -6,7 +6,7 @@ package com.tecsisa.lightql
 package mat
 package elastic
 package http
-import com.sksamuel.elastic4s.http.ElasticClient
+import com.sksamuel.elastic4s.ElasticClient
 
 class HttpSearchSpec extends BaseSearchSpec {
 
