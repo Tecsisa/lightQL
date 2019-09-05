@@ -42,7 +42,7 @@ lazy val `elastic-http` = project
     name := "lightql-elastic-http",
     version := Version.ElasticMaterializer,
     libraryDependencies ++= Seq(
-      Library.elastic4sHttp
+      Library.elastic4sClient
     )
   )
   .dependsOn(elastic)

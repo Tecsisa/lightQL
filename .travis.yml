@@ -3,7 +3,6 @@ language: scala
 sudo: required
 
 scala:
-  - "2.11.12"
   - "2.12.7"
 
 jdk:
@@ -30,4 +29,4 @@ before_script:
   - sudo chmod +x /usr/local/bin/sbt
 
 before_install:
-- docker run -d -p 9200:9200 -p 9300:9300 -e "path.repo=/tmp" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:6.7.2
+- docker run -d -p 9200:9200 -p 9300:9300 -e "path.repo=/tmp" -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.3.1

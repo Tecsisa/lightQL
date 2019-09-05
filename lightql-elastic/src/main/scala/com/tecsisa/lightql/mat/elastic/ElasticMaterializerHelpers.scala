@@ -5,8 +5,8 @@
 package com.tecsisa.lightql.mat.elastic
 
 import com.sksamuel.elastic4s.Show
-import com.sksamuel.elastic4s.searches.SearchRequest
-import com.sksamuel.elastic4s.searches.queries.{ Query => EsQuery }
+import com.sksamuel.elastic4s.requests.searches.SearchRequest
+import com.sksamuel.elastic4s.requests.searches.queries.{ Query => EsQuery }
 import com.tecsisa.lightql.ast.Query
 import com.tecsisa.lightql.mat.Materializer
 
