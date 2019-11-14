@@ -40,7 +40,7 @@ private[parser] trait BasicParsers extends Helpers {
   protected[this] val yearMonth      = P(year ~ "-" ~ dMHms).!.map(parseYearMonth)
 
   // A sequence of chars
-  protected[this] val charSeq = P(CharIn('A' to 'Z', 'a' to 'z', '0' to '9', "_-"))
+  protected[this] val charSeq = P(CharIn('A' to 'Z', 'a' to 'z', '0' to '9', "_"))
 
   // A parser for open parens
   protected[this] val openParen = P("(" ~ space)
@@ -56,6 +56,9 @@ private[parser] trait BasicParsers extends Helpers {
 
   // A parser for open brackets
   protected[this] val openBracket = P("[" ~ space)
+
+  // A parser for open brackets
+  protected[this] val nesting = P("->")
 
   // A parser for close brackets
   protected[this] val closeBracket = P(space ~ "]")

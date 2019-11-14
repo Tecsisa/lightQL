@@ -7,10 +7,11 @@ package parser
 
 import fastparse.noApi._
 import com.tecsisa.lightql.ast.ClauseTree
-import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
+import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause, Nested }
 import com.tecsisa.lightql.ast.LogicOperator
 import com.tecsisa.lightql.ast.Operator.Associativity
 import com.tecsisa.lightql.parser.white._
+import fastparse.core
 
 import scala.annotation.tailrec
 
@@ -21,11 +22,17 @@ private[parser] case object ClauseTreeParse
 
   val element =
     P(dateTime | localDate | yearMonth | double | integer | quoted(CharPred(_ != '"').rep))
-  val field = P(charSeq.rep(sep = ("." | "->").?)).!
+  val field = P(charSeq.rep(sep = ".".?)).!
   val value = P(list(element) | element)
-  val clause = P(field ~ clauseOperator ~ value).map {
+  val simpleClause = P(field ~ clauseOperator ~ value).map {
     case (f, op, v) => Clause(f, op, v)
   }
+  val nestedClause: core.Parser[Nested[Any], Char, String] =
+    P((field ~ nesting ~ openBracket ~ this ~ closeBracket) | (field ~ nesting ~ simpleClause) | (field ~ nesting ~ nestedClause))
+      .map {
+        case (f, c) => Nested(f, c)
+      }
+  val clause               = P(simpleClause | nestedClause)
   val logicOperatorSection = P(logicOperator)
 
   def parseRec(cfg: StringParseCtx, index: Int): StringMutable[ClauseTree] =

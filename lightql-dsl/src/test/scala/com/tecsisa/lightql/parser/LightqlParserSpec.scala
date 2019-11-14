@@ -9,7 +9,7 @@ import com.tecsisa.lightql.ast.{ EqualityOperator => EqOp }
 import com.tecsisa.lightql.ast.{ NumericOperator => NumOp }
 import com.tecsisa.lightql.ast.{ MatchingOperator => MatchOp }
 import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
-import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
+import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause, Nested }
 import com.tecsisa.lightql.ast.Query
 import org.joda.time.DateTimeZone.UTC
 import org.joda.time.{ DateTime, LocalDate, YearMonth }
@@ -61,18 +61,22 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
       }
     }
     "parse: `foo->name = \"foobar\"`" in {
-      "foo->name = \"foobar\"" should parseTo { Query(Clause("foo->name", EqOp.`=`, "foobar")) }
+      "foo->name = \"foobar\"" should parseTo {
+        Query(Nested("foo", Clause("name", EqOp.`=`, "foobar")))
+      }
     }
     "parse: `foo.count = 25`" in {
       "foo.count = 25" should parseTo { Query(Clause("foo.count", EqOp.`=`, 25)) }
     }
     "parse: `foo->bar.name = \"foobar\"`" in {
       "foo->bar.name =  \"foobar\"" should parseTo {
-        Query(Clause("foo->bar.name", EqOp.`=`, "foobar"))
+        Query(Nested("foo", Clause("bar.name", EqOp.`=`, "foobar")))
       }
     }
     "parse: `foo.bar->count = 25`" in {
-      "foo.bar->count = 25" should parseTo { Query(Clause("foo.bar->count", EqOp.`=`, 25)) }
+      "foo.bar->count = 25" should parseTo {
+        Query(Nested("foo.bar", Clause("count", EqOp.`=`, 25)))
+      }
     }
     "parse: `foo != 25`" in {
       "foo != 25" should parseTo { Query(Clause("foo", EqOp.!=, 25)) }
@@ -140,6 +144,71 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
         )
       }
     }
+
+    "parse: `foo->bar = 100`" in {
+      "foo->bar = 100" should parseTo {
+        Query(
+          Nested("foo", Clause("bar", EqOp.`=`, 100))
+        )
+      }
+    }
+
+    "parse: `foo.sub_foo->bar = 100`" in {
+      "foo.sub_foo->bar = 100" should parseTo {
+        Query(
+          Nested("foo.sub_foo", Clause("bar", EqOp.`=`, 100))
+        )
+      }
+    }
+
+    "parse: `foo.sub_foo->bar.sub_bar = 100`" in {
+      "foo.sub_foo->bar.sub_bar = 100" should parseTo {
+        Query(
+          Nested("foo.sub_foo", Clause("bar.sub_bar", EqOp.`=`, 100))
+        )
+      }
+    }
+
+    "parse: `foo->bar.elem->elem_foo = 100`" in {
+      "foo->bar.elem->elem_foo = 100" should parseTo {
+        Query(
+          Nested("foo", Nested("bar.elem", Clause("elem_foo", EqOp.`=`, 100)))
+        )
+      }
+    }
+
+    "parse: `foo->bar.elem->[elem_foo = 100]`" in {
+      "foo->bar.elem->[elem_foo = 100]" should parseTo {
+        Query(
+          Nested("foo", Nested("bar.elem", Clause("elem_foo", EqOp.`=`, 100)))
+        )
+      }
+    }
+
+    "parse: `foo->[bar = 100 and baz = 150]`" in {
+      "foo->[bar = 100 and baz = 150]" should parseTo {
+        Query(
+          Nested(
+            "foo",
+            CombinedClause(Clause("bar", EqOp.`=`, 100), and, Clause("baz", EqOp.`=`, 150)))
+        )
+      }
+    }
+
+    "parse: `(foo.elem1 = 4 and foo.elem2 = 5) and foo.nested->[bar = 100 and baz = 150]`" in {
+      "(foo.elem1 = 4 and foo.elem2 = 5) and foo.nested->[bar = 100 and baz = 150]" should parseTo {
+        Query(
+          CombinedClause(
+            CombinedClause(Clause("foo.elem1", EqOp.`=`, 4), and, Clause("foo.elem2", EqOp.`=`, 5)),
+            and,
+            Nested(
+              "foo.nested",
+              CombinedClause(Clause("bar", EqOp.`=`, 100), and, Clause("baz", EqOp.`=`, 150)))
+          )
+        )
+      }
+    }
+
     "not parse: `foo = foobar`" in {
       "foo = foobar" should notParse
     }

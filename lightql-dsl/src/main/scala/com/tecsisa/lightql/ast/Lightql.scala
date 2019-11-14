@@ -9,6 +9,7 @@ sealed trait Lightql    extends Product with Serializable
 sealed trait ClauseTree extends Lightql
 object ClauseTree {
   type Field = String
+  case class Nested[V](path: Field, c: ClauseTree)                               extends ClauseTree
   case class Clause[V](field: Field, op: BinaryOperator, value: V)               extends ClauseTree
   case class CombinedClause(lct: ClauseTree, op: LogicOperator, rct: ClauseTree) extends ClauseTree
 }

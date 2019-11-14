@@ -9,9 +9,9 @@ package elastic
 import com.sksamuel.elastic4s.requests.searches.queries.matches.MatchQuery
 import com.sksamuel.elastic4s.requests.searches.queries.term.{ TermQuery, TermsQuery }
 import com.sksamuel.elastic4s.requests.searches.queries.{ BoolQuery, NestedQuery, RangeQuery, Query => EsQuery }
-import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause }
+import com.tecsisa.lightql.ast.ClauseTree.{ Clause, CombinedClause, Field, Nested }
 import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
-import com.tecsisa.lightql.ast.{ ClauseTree, LogicOperator, Query, EqualityOperator => EqOp, MatchingOperator => MatchOp, NumericOperator => NumOp }
+import com.tecsisa.lightql.ast.{ ClauseTree, Query, EqualityOperator => EqOp, MatchingOperator => MatchOp, NumericOperator => NumOp }
 
 trait ElasticMaterializer extends Materializer[EsQuery] {
 
@@ -22,100 +22,52 @@ trait ElasticMaterializer extends Materializer[EsQuery] {
       def buildTermQueryFromClause[V](field: ClauseTree.Field, value: V): EsQuery =
         value match {
           case seq: Iterable[AnyRef] @unchecked =>
-            TermsQuery(stdField(field), seq)
-          case _ => TermQuery(stdField(field), value)
+            TermsQuery(field, seq)
+          case _ => TermQuery(field, value)
         }
 
-      def buildQueryFromClause[V](c: Clause[V], qb: BoolQuery): BoolQuery =
-        c.op match {
-          case EqOp.`=` =>
-            qb.must(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
-          case EqOp.!= =>
-            qb.not(nestQuery(buildTermQueryFromClause(c.field, c.value), c.field))
-          case MatchOp.~ =>
-            qb.must(nestQuery(MatchQuery(stdField(c.field), c.value), c.field))
-          case MatchOp.!~ =>
-            qb.not(nestQuery(MatchQuery(stdField(c.field), c.value), c.field))
-          case NumOp.< =>
-            qb.filter(
-              nestQuery(RangeQuery(stdField(c.field)).lt(c.value.toString), c.field)
-            )
-          case NumOp.<= =>
-            qb.filter(
-              nestQuery(RangeQuery(stdField(c.field)).lte(c.value.toString), c.field)
-            )
-          case NumOp.> =>
-            qb.filter(
-              nestQuery(RangeQuery(stdField(c.field)).gt(c.value.toString), c.field)
-            )
-          case NumOp.>= =>
-            qb.filter(
-              nestQuery(RangeQuery(stdField(c.field)).gte(c.value.toString), c.field)
-            )
-          case _ => qb
+      def prependPathToFields(ct: ClauseTree, path: Field): ClauseTree =
+        ct match {
+          case Nested(field, tree)      => Nested(path + "." + field, prependPathToFields(tree, path))
+          case Clause(field, op, value) => Clause(path + "." + field, op, value)
+          case CombinedClause(lct, op, rct) =>
+            CombinedClause(prependPathToFields(lct, path), op, prependPathToFields(rct, path))
         }
-
-      def buildQueryFromCombinedAndClause[V](
-          qb: BoolQuery,
-          lop: LogicOperator,
-          ct: ClauseTree,
-          c: Clause[V]
-      ) = lop match {
-        case `and` =>
-          qb.must(Seq(loop(ct, BoolQuery()), buildQueryFromClause(c, qb)))
-        case `or` =>
-          qb.should(Seq(loop(ct, qb), buildQueryFromClause(c, qb)))
-      }
 
       ct match {
+        case Nested(path, tree) =>
+          NestedQuery(path, loop(prependPathToFields(tree, path), qb))
         case Clause(field, op, value) =>
           op match {
-            case EqOp.`=`  => nestQuery(buildTermQueryFromClause(field, value), field)
-            case EqOp.!=   => qb.not(nestQuery(buildTermQueryFromClause(field, value), field))
-            case MatchOp.~ => nestQuery(MatchQuery(stdField(field), value), field)
+            case EqOp.`=` =>
+              buildTermQueryFromClause(field, value)
+            case EqOp.!= =>
+              qb.not(buildTermQueryFromClause(field, value))
+            case MatchOp.~ =>
+              MatchQuery(field, value)
             case MatchOp.!~ =>
-              qb.not(nestQuery(MatchQuery(stdField(field), value), field))
+              qb.not(MatchQuery(field, value))
             case NumOp.< =>
-              nestQuery(RangeQuery(stdField(field)).lt(value.toString), field)
-            case NumOp.<= => nestQuery(RangeQuery(stdField(field)).lte(value.toString), field)
+              RangeQuery(field).lt(value.toString)
+            case NumOp.<= =>
+              RangeQuery(field).lte(value.toString)
             case NumOp.> =>
-              nestQuery(RangeQuery(stdField(field)).gt(value.toString), field)
-            case NumOp.>= => nestQuery(RangeQuery(stdField(field)).gte(value.toString), field)
-            case _        => sys.error("Impossible")
+              RangeQuery(field).gt(value.toString)
+            case NumOp.>= =>
+              RangeQuery(field).gte(value.toString)
+            case _ =>
+              sys.error("Impossible")
           }
         case CombinedClause(lct, lop, rct) =>
-          (lct, rct) match {
-            case (_: CombinedClause, _: CombinedClause) =>
-              def f(q: EsQuery) = lop match {
-                case `and` => qb.must(q); case `or` => qb.should(q)
-              }
-              qb.filter(Seq(lct, rct).map(x => f(loop(x, BoolQuery()))))
-            case (_: CombinedClause, c: Clause[_]) =>
-              buildQueryFromCombinedAndClause(qb, lop, lct, c)
-            case (c: Clause[_], _: CombinedClause) =>
-              buildQueryFromCombinedAndClause(qb, lop, rct, c)
-            case (cl: Clause[_], cr: Clause[_]) =>
-              lop match {
-                case `and` =>
-                  qb.must(Seq(cl, cr).map(buildQueryFromClause(_, qb)))
-                case `or` =>
-                  qb.should(Seq(cl, cr).map(c => qb.should(loop(c, qb))))
-              }
-          } // combined clause pattern matching
+          lop match {
+            case `and` =>
+              qb.must(Seq(loop(lct, BoolQuery()), loop(rct, BoolQuery())))
+            case `or` =>
+              qb.should(Seq(loop(lct, qb), loop(rct, qb)))
+          }
       } // main pattern matching
     } // loop
     loop(query.ct, BoolQuery())
   } // Materializer
-
-  private[this] def stdField(field: ClauseTree.Field): ClauseTree.Field =
-    field.replace("->", ".")
-
-  private[this] def isNested(field: ClauseTree.Field): Boolean = field.contains("->")
-
-  private[this] def fieldPath(field: ClauseTree.Field): String =
-    stdField(field.dropRight(field.split("->").last.length + 2))
-
-  private[this] def nestQuery(qb: EsQuery, field: ClauseTree.Field): EsQuery =
-    if (isNested(field)) NestedQuery(fieldPath(field), qb) else qb
 
 }

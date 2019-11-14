@@ -21,7 +21,7 @@ class HttpSearchSpec extends BaseSearchSpec {
       search("songs") query q("date.yearMonth = 2016-02") should haveTotalHits(1)
       search("songs") query q("stats->rate.stars = 5.0") should haveTotalHits(2)
       search("songs") query q("tags->code = \"INSTRUMENTAL\"") should haveTotalHits(2)
-      search("songs") query q("tags->code != \"INSTRUMENTAL\"") should haveTotalHits(8)
+      search("songs") query q("tags->code != \"INSTRUMENTAL\"") should haveTotalHits(1)
     }
     "find exact results in queries with multiple values" in {
       search("songs") query q("composer = [\"Johann Sebastian Bach\", \"Radiohead\"]") should haveTotalHits(
@@ -58,7 +58,7 @@ class HttpSearchSpec extends BaseSearchSpec {
       search("songs") query q6 should haveTotalHits(8)
       val q7 = q("composer != \"Johann Sebastian Bach\" or composer != \"Patrick Leonard\"")
       search("songs") query q7 should haveTotalHits(10)
-      val q8 = q("stats->rate.stars = 4.5 or stats->rate.stars = 3.5")
+      val q8 = q("stats->[rate.stars = 4.5 or rate.stars = 3.5]")
       search("songs") query q8 should haveTotalHits(3)
     }
     "match results in queries with a combined clause" in {
