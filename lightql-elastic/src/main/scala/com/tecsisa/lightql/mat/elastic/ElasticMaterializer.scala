@@ -28,7 +28,7 @@ trait ElasticMaterializer extends Materializer[EsQuery] {
 
       def prependPathToFields(ct: ClauseTree, path: Field): ClauseTree =
         ct match {
-          case Nested(field, tree)      => Nested(path + "." + field, prependPathToFields(tree, path))
+          case Nested(field, tree)      => Nested(path + "." + field, tree)
           case Clause(field, op, value) => Clause(path + "." + field, op, value)
           case CombinedClause(lct, op, rct) =>
             CombinedClause(prependPathToFields(lct, path), op, prependPathToFields(rct, path))
