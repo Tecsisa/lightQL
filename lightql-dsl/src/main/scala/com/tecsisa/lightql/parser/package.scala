@@ -5,24 +5,17 @@
 package com.tecsisa.lightql
 
 import com.tecsisa.lightql.ast.Query
-import fastparse.WhitespaceApi
-import fastparse.core.{ Mutable, ParseCtx, Parsed, Parser }
+import fastparse._
+
+import fastparse.Parsed
 
 package object parser extends Helpers with LightqlParser {
 
-  type StringParsed[+T] = Parsed[T, Char, String]
+  def parseQuery[_: P](s: String): Parsed[Query] = LightqlParser.parse(s)
 
-  def parse(s: String): StringParsed[Query] = LightqlParser.parse(s)
-
-  protected[parser] type StringParser[+T]        = Parser[T, Char, String]
-  protected[parser] type StringParseCtx          = ParseCtx[Char, String]
-  protected[parser] type StringMutableSuccess[T] = Mutable.Success[T, Char, String]
-  protected[parser] type StringMutableFailure    = Mutable.Failure[Char, String]
-  protected[parser] type StringMutable[+T]       = Mutable[T, Char, String]
-
-  protected[parser] val white = WhitespaceApi.Wrapper {
-    import fastparse.all._
-    NoTrace(CharsWhile(Whitespace).?)
+  object LightQlWhiteSpace {
+    implicit val white = { implicit ctx: ParsingRun[_] =>
+      NoTrace(CharsWhile(Whitespace).?)
+    }
   }
-
 }
