@@ -55,7 +55,8 @@ private[parser] case object ClauseTreeParse extends Operators with BasicParsers 
     }
 
   private def computeExpr(index: Int, depth: Int, minPrec: Int = 1)(
-      implicit ctx: P[_]): (P[ClauseTree], Int) =
+      implicit ctx: P[_]
+  ): (P[ClauseTree], Int) =
     computeAtom(index, depth) match {
       case (atom, dep) =>
         fastparse.parse(input = ctx.input, parser = _ => atom, startIndex = index) match {
@@ -82,7 +83,8 @@ private[parser] case object ClauseTreeParse extends Operators with BasicParsers 
                         fastparse.parse(
                           input = ctx.input,
                           parser = _ => nextExpr,
-                          startIndex = index) match {
+                          startIndex = index
+                        ) match {
                           case Parsed.Success(nextExprValue, nextExpIndex) =>
                             loop(computeOp(lct, op, nextExprValue), nextExpIndex, ctx.cut, d)
                           case _: Parsed.Failure =>
@@ -107,7 +109,7 @@ private[parser] case object ClauseTreeParse extends Operators with BasicParsers 
                       current()
                   }
               } // logicOperator parsing
-            } // loop
+            }   // loop
             loop(atomSuccessValue, atomIndex, atom.cut, dep)
           case _: Parsed.Failure =>
             (ctx.freshFailure(startPos = index), dep)

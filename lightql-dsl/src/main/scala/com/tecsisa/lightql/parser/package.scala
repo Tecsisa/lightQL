@@ -14,8 +14,6 @@ package object parser extends Helpers with LightqlParser {
   def parseQuery[_: P](s: String): Parsed[Query] = LightqlParser.parse(s)
 
   object LightQlWhiteSpace {
-    implicit val white = { implicit ctx: ParsingRun[_] =>
-      NoTrace(CharsWhile(Whitespace).?)
-    }
+    implicit val white = { implicit ctx: ParsingRun[_] => NoTrace(CharsWhile(Whitespace).?) }
   }
 }

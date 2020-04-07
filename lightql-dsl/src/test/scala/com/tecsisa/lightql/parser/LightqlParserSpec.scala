@@ -24,7 +24,7 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
       }
     }
     "parse: `foo <= -25`" in {
-      "foo <= -25" should parseTo { Query(Clause("foo", NumOp.<=, -25)) }
+      "foo <= -25" should parseTo(Query(Clause("foo", NumOp.<=, -25)))
     }
     "parse: `foo = 2.0000000000000002`" in {
       "foo = 2.0000000000000002" should parseTo {
@@ -47,13 +47,13 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
       }
     }
     "parse: `foo <= 25`" in {
-      "foo <= 25" should parseTo { Query(Clause("foo", NumOp.<=, 25)) }
+      "foo <= 25" should parseTo(Query(Clause("foo", NumOp.<=, 25)))
     }
     "parse: `foo = \"foobar\"`" in {
-      "foo = \"foobar\"" should parseTo { Query(Clause("foo", EqOp.`=`, "foobar")) }
+      "foo = \"foobar\"" should parseTo(Query(Clause("foo", EqOp.`=`, "foobar")))
     }
     "parse: `fooBar = \"foobar\"`" in {
-      "fooBar = \"foobar\"" should parseTo { Query(Clause("fooBar", EqOp.`=`, "foobar")) }
+      "fooBar = \"foobar\"" should parseTo(Query(Clause("fooBar", EqOp.`=`, "foobar")))
     }
     "parse: `foo = [25, -2.4, \"foobar\"]`" in {
       "foo = [25, -2.4, \"foobar\"]" should parseTo {
@@ -61,10 +61,10 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
       }
     }
     "parse: `foo->name = \"foobar\"`" in {
-      "foo->name = \"foobar\"" should parseTo { Query(Clause("foo->name", EqOp.`=`, "foobar")) }
+      "foo->name = \"foobar\"" should parseTo(Query(Clause("foo->name", EqOp.`=`, "foobar")))
     }
     "parse: `foo.count = 25`" in {
-      "foo.count = 25" should parseTo { Query(Clause("foo.count", EqOp.`=`, 25)) }
+      "foo.count = 25" should parseTo(Query(Clause("foo.count", EqOp.`=`, 25)))
     }
     "parse: `foo->bar.name = \"foobar\"`" in {
       "foo->bar.name =  \"foobar\"" should parseTo {
@@ -72,16 +72,16 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
       }
     }
     "parse: `foo.bar->count = 25`" in {
-      "foo.bar->count = 25" should parseTo { Query(Clause("foo.bar->count", EqOp.`=`, 25)) }
+      "foo.bar->count = 25" should parseTo(Query(Clause("foo.bar->count", EqOp.`=`, 25)))
     }
     "parse: `foo != 25`" in {
-      "foo != 25" should parseTo { Query(Clause("foo", EqOp.!=, 25)) }
+      "foo != 25" should parseTo(Query(Clause("foo", EqOp.!=, 25)))
     }
     "parse: `foo ~ \"foobar\"`" in {
-      "foo ~ \"foobar\"" should parseTo { Query(Clause("foo", MatchOp.~, "foobar")) }
+      "foo ~ \"foobar\"" should parseTo(Query(Clause("foo", MatchOp.~, "foobar")))
     }
     "parse: `foo !~ \"foobar\"`" in {
-      "foo !~ \"foobar\"" should parseTo { Query(Clause("foo", MatchOp.!~, "foobar")) }
+      "foo !~ \"foobar\"" should parseTo(Query(Clause("foo", MatchOp.!~, "foobar")))
     }
     "parse: `foo = 25 and bar = 100`" in {
       "foo = 25 and bar = 100" should parseTo {
@@ -94,7 +94,9 @@ class LightqlParserSpec extends WordSpec with QueryMatchers {
           CombinedClause(
             Clause("foo", EqOp.`=`, new YearMonth(2001, 7)),
             and,
-            Clause("bar", EqOp.`=`, new DateTime(2001, 7, 12, 10, 10, 30, 2, UTC))))
+            Clause("bar", EqOp.`=`, new DateTime(2001, 7, 12, 10, 10, 30, 2, UTC))
+          )
+        )
       }
     }
     "parse: `(foo = 25 and (bar = 100))`" in {
