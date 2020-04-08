@@ -51,7 +51,8 @@ trait BaseSearchSpec
             "full"      -> "2016-01-05",
             "localDate" -> "2016-01-05",
             "yearMonth" -> "2016-01",
-            "year"      -> 1997),
+            "year"      -> 1997
+          ),
           "price" -> 1.26,
           "stats" -> Map("rate" -> Map("stars" -> 4.5))
         ),
@@ -64,7 +65,8 @@ trait BaseSearchSpec
             "full"      -> "2016-02-06T12:30:00.000Z",
             "localDate" -> "2016-02-06",
             "yearMonth" -> "2016-02",
-            "year"      -> 2016),
+            "year"      -> 2016
+          ),
           "year"  -> 2016,
           "price" -> 2.45,
           "stats" -> Map("rate" -> Map("stars" -> 3.5))
@@ -78,7 +80,8 @@ trait BaseSearchSpec
             "full"      -> "1959-08-17T00:00:00.000Z",
             "localDate" -> "1959-08-17",
             "yearMonth" -> "1959-08",
-            "year"      -> 1959),
+            "year"      -> 1959
+          ),
           "price" -> 1.99,
           "stats" -> Map("rate" -> Map("stars" -> 5.0)),
           "tags"  -> List(Map("code" -> "INSTRUMENTAL"))
@@ -92,7 +95,8 @@ trait BaseSearchSpec
             "full"      -> "1987-02-25T00:00:00.000Z",
             "localDate" -> "1987-02-25",
             "yearMonth" -> "1987-02",
-            "year"      -> 1987),
+            "year"      -> 1987
+          ),
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 2.75))
         ),
@@ -105,7 +109,8 @@ trait BaseSearchSpec
             "full"      -> "1967-10-04T00:00:00.000Z",
             "localDate" -> "1967-10-04",
             "yearMonth" -> "1967-10",
-            "year"      -> 1967),
+            "year"      -> 1967
+          ),
           "price" -> 2.11,
           "stats" -> Map("rate" -> Map("stars" -> 3.25))
         ),
@@ -118,7 +123,8 @@ trait BaseSearchSpec
             "full"      -> "2002-08-19T00:00:00.000Z",
             "localDate" -> "2002-08-19",
             "yearMonth" -> "2002-08",
-            "year"      -> 2002),
+            "year"      -> 2002
+          ),
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 4.25))
         ),
@@ -131,7 +137,8 @@ trait BaseSearchSpec
             "full"      -> "2002-07-01T00:00:00.000Z",
             "localDate" -> "2002-07-01",
             "yearMonth" -> "2002-07",
-            "year"      -> 2002),
+            "year"      -> 2002
+          ),
           "price" -> 1.19,
           "stats" -> Map("rate" -> Map("stars" -> 1.5))
         ),
@@ -144,7 +151,8 @@ trait BaseSearchSpec
             "full"      -> "1955-05-22T00:00:00.000Z",
             "localDate" -> "1955-05-22",
             "yearMonth" -> "1955-05",
-            "year"      -> 1955),
+            "year"      -> 1955
+          ),
           "price" -> 0.99,
           "stats" -> Map("rate" -> Map("stars" -> 3.0)),
           "tags"  -> List(Map("code" -> "BAROQUE"), Map("code" -> "INSTRUMENTAL"))
@@ -158,7 +166,8 @@ trait BaseSearchSpec
             "full"      -> "1985-11-02",
             "localDate" -> "1985-11-02",
             "yearMonth" -> "1985-11",
-            "year"      -> 1985),
+            "year"      -> 1985
+          ),
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 3.5))
         ),
@@ -171,7 +180,8 @@ trait BaseSearchSpec
             "full"      -> "1991-09-10T00:00:00.000Z",
             "year"      -> 1991,
             "localDate" -> "1991-09-10",
-            "yearMonth" -> "1991-09"),
+            "yearMonth" -> "1991-09"
+          ),
           "price" -> 1.34,
           "stats" -> Map("rate" -> Map("stars" -> 5.0))
         )

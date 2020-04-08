@@ -102,8 +102,8 @@ trait ElasticMaterializer extends Materializer[EsQuery] {
                   qb.should(Seq(cl, cr).map(c => qb.should(loop(c, qb))))
               }
           } // combined clause pattern matching
-      } // main pattern matching
-    } // loop
+      }     // main pattern matching
+    }       // loop
     loop(query.ct, BoolQuery())
   } // Materializer
 

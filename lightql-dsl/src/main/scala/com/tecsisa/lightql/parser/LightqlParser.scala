@@ -5,16 +5,19 @@
 package com.tecsisa.lightql
 package parser
 
-import fastparse.noApi._
 import com.tecsisa.lightql.ast.Query
-import com.tecsisa.lightql.parser.white._
+import fastparse._
+import LightQlWhiteSpace._
 
 object LightqlParser extends LightqlParser {
-  def parse(s: String): StringParsed[Query] = (P(space ~ clauseTree ~ End) map Query).parse(s)
+  private[this] def lightqlParser[_: P] = P(space ~ clauseTree ~ End) map Query
+
+  def parse(s: String): Parsed[Query] =
+    fastparse.parse(input = s, parser = lightqlParser(_))
 }
 
 private[parser] trait LightqlParser extends BasicParsers with Operators {
 
   /** ClauseTree section */
-  protected[this] val clauseTree = P(ClauseTreeParse)
+  protected[this] def clauseTree[_: P] = P(ClauseTreeParse.clauseTreeParser())
 }
