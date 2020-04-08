@@ -66,7 +66,7 @@ trait ElasticMaterializer extends Materializer[EsQuery] {
               qb.should(Seq(loop(lct, qb), loop(rct, qb)))
           }
       } // main pattern matching
-    } // loop
+    }   // loop
     loop(query.ct, BoolQuery())
   } // Materializer
 

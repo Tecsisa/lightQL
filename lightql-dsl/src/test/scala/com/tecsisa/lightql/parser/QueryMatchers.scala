@@ -6,14 +6,14 @@ package com.tecsisa.lightql
 package parser
 
 import com.tecsisa.lightql.ast.Query
-import fastparse.core.Parsed.Success
+import fastparse.Parsed.Success
 import org.scalatest.Matchers
 import org.scalatest.matchers.{ MatchResult, Matcher }
 
 trait QueryMatchers extends Matchers {
 
-  type Success = fastparse.core.Parsed.Success[Query, _, _]
-  type Failure = fastparse.core.Parsed.Failure[_, _]
+  type Success = fastparse.Parsed.Success[Query]
+  type Failure = fastparse.Parsed.Failure
 
   def parseTo(query: Query): Matcher[String] = new Matcher[String] {
     override def apply(left: String): MatchResult = {

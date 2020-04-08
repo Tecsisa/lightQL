@@ -5,31 +5,31 @@
 package com.tecsisa.lightql
 package parser
 
-import fastparse.all._
+import fastparse._
 import com.tecsisa.lightql.ast.EqualityOperator
 import com.tecsisa.lightql.ast.MatchingOperator
 import com.tecsisa.lightql.ast.LogicOperator.{ and, or }
 import com.tecsisa.lightql.ast.NumericOperator.{ <, <=, >, >= }
 
 private[parser] trait Operators extends BasicParsers {
-  protected[this] val eqOperator = P("=" | "!=").!.map {
+  protected[this] def eqOperator[_: P] = P("=" | "!=").!.map {
     case "="  => EqualityOperator.`=`
     case "!=" => EqualityOperator.!=
   }
-  protected[this] val matchingOperator = P("~" | "!~").!.map {
+  protected[this] def matchingOperator[_: P] = P("~" | "!~").!.map {
     case "~"  => MatchingOperator.~
     case "!~" => MatchingOperator.!~
   }
-  protected[this] val numericOperator = P(">=" | "<=" | "<" | ">").!.map {
+  protected[this] def numericOperator[_: P] = P(">=" | "<=" | "<" | ">").!.map {
     case ">=" => >=
     case "<=" => <=
     case "<"  => <
     case ">"  => >
   }
-  protected[this] val logicOperator =
+  protected[this] def logicOperator[_: P] =
     monospaced(P(IgnoreCase("and") | IgnoreCase("or")).!).map(_.toLowerCase).map {
       case "and" => and
       case "or"  => or
     }
-  protected[this] val clauseOperator = eqOperator | matchingOperator | numericOperator
+  protected[this] def clauseOperator[_: P] = eqOperator | matchingOperator | numericOperator
 }

@@ -5,77 +5,78 @@
 package com.tecsisa.lightql
 package parser
 
-import fastparse.all._
+import fastparse._
+import fastparse.NoWhitespace._
 
 private[parser] trait BasicParsers extends Helpers {
 
   // A parser for optional spaces
-  protected[this] val space = P(CharsWhile(Whitespace).?)
+  protected[this] def space[_: P] = P(CharsWhile(Whitespace).?)
 
   // A parser for one space at least
-  protected[this] val oneSpaceAtLeast = P(" " ~ space)
+  protected[this] def oneSpaceAtLeast[_: P] = P(" " ~ space)
 
   // A parser for digits
-  protected[this] val digits = P(CharsWhile(Digits))
+  protected[this] def digits[_: P] = P(CharsWhile(Digits))
 
   // A parser for integral numbers
-  protected[this] val integral = P("0" | CharIn('1' to '9') ~ digits.?)
+  protected[this] def integral[_: P] = P("0" | CharIn("1-9") ~ digits.?)
 
   // A parser for integer numbers
-  protected[this] val integer = P("-".? ~ integral).!.map(_.toInt)
+  protected[this] def integer[_: P] = P("-".? ~ integral).!.map(_.toInt)
 
   // A parser for double numbers (IEEE 754 floating point)
-  protected[this] val double =
+  protected[this] def double[_: P] =
     P("-".? ~ integral ~ "." ~ integral.rep(min = 1, max = 16)).!.map(_.toDouble)
 
   // A parser for dates (yyyy-MM-dd || yyyy-MM-ddTHH:mm:ss)
-  protected[this] val dMHms          = P(CharIn('0' to '9').rep(min = 2, max = 2))
-  protected[this] val year           = P(CharIn('0' to '9').rep(min = 4, max = 4))
-  protected[this] val seconds        = P(dMHms ~ ("." ~ CharIn('0' to '9').rep(max = 3)).?)
-  protected[this] val time           = P("T" ~ dMHms ~ ":" ~ dMHms ~ ":" ~ seconds)
-  protected[this] val tz             = P((("-" | "+") ~ dMHms ~ ":" ~ dMHms) | "Z")
-  protected[this] val dateTimeFormat = P(year ~ "-" ~ dMHms ~ "-" ~ dMHms ~ time ~ tz.?)
-  protected[this] val dateTime       = dateTimeFormat.!.map(parseDateTime)
-  protected[this] val localDate      = P(year ~ "-" ~ dMHms ~ "-" ~ dMHms).!.map(parseLocalDate)
-  protected[this] val yearMonth      = P(year ~ "-" ~ dMHms).!.map(parseYearMonth)
+  protected[this] def dMHms[_: P]          = P(CharIn("0-9").rep(min = 2, max = 2))
+  protected[this] def year[_: P]           = P(CharIn("0-9").rep(min = 4, max = 4))
+  protected[this] def seconds[_: P]        = P(dMHms ~ ("." ~ CharIn("0-9").rep(max = 3)).?)
+  protected[this] def time[_: P]           = P("T" ~ dMHms ~ ":" ~ dMHms ~ ":" ~ seconds)
+  protected[this] def tz[_: P]             = P((("-" | "+") ~ dMHms ~ ":" ~ dMHms) | "Z")
+  protected[this] def dateTimeFormat[_: P] = P(year ~ "-" ~ dMHms ~ "-" ~ dMHms ~ time ~ tz.?)
+  protected[this] def dateTime[_: P]       = dateTimeFormat.!.map(parseDateTime)
+  protected[this] def localDate[_: P]      = P(year ~ "-" ~ dMHms ~ "-" ~ dMHms).!.map(parseLocalDate)
+  protected[this] def yearMonth[_: P]      = P(year ~ "-" ~ dMHms).!.map(parseYearMonth)
 
   // A sequence of chars
-  protected[this] val charSeq = P(CharIn('A' to 'Z', 'a' to 'z', '0' to '9', "_"))
+  protected[this] def charSeq[_: P] = P(CharIn("A-Z", "a-z", "0-9", "_"))
 
   // A parser for open parens
-  protected[this] val openParen = P("(" ~ space)
+  protected[this] def openParen[_: P] = P("(" ~ space)
 
   // A parser for look ahead of open parens
-  protected[this] val openParenLah = P(&("("))
+  protected[this] def openParenLah[_: P] = P(&("("))
 
   // A parser for closed parens
-  protected[this] val closeParen = P(space ~ ")")
+  protected[this] def closeParen[_: P] = P(space ~ ")")
 
   // A parser for look ahead of closed parens
-  protected[this] val closeParenLah = P(space ~ &(")"))
+  protected[this] def closeParenLah[_: P] = P(space ~ &(")"))
 
   // A parser for open brackets
-  protected[this] val openBracket = P("[" ~ space)
+  protected[this] def openBracket[_: P] = P("[" ~ space)
 
   // A parser for open brackets
-  protected[this] val nesting = P("->")
+  protected[this] def nesting[_: P] = P("->")
 
   // A parser for close brackets
-  protected[this] val closeBracket = P(space ~ "]")
+  protected[this] def closeBracket[_: P] = P(space ~ "]")
 
   // A parser for a parentized block
-  protected[this] def parenBlock[T](p: Parser[T]): Parser[Vector[T]] =
+  protected[this] def parenBlock[T](p: => P[T])(implicit ctx: P[_]): P[Vector[T]] =
     openParen ~ p.rep(sep = ",").map(_.toVector) ~ closeParen
 
   // A parser for a quoted block
-  protected[this] def quoted[T](p: Parser[T]): Parser[String] =
+  protected[this] def quoted(p: => P[_])(implicit ctx: P[_]): P[String] =
     P("\"" ~ (space ~ p ~ space).! ~ "\"")
 
   // A parser for a block surrounded for one space at least
-  protected[this] def monospaced[T](p: Parser[T]): Parser[T] =
+  protected[this] def monospaced[T](p: => P[T])(implicit ctx: P[_]): P[T] =
     P(oneSpaceAtLeast ~ p ~ oneSpaceAtLeast)
 
   // A parser for a list of elements
-  protected[this] def list[T](p: Parser[T]): Parser[List[T]] =
+  protected[this] def list[T](p: => P[T])(implicit ctx: P[_]): P[List[T]] =
     openBracket ~ (space ~ p ~ space).rep(sep = ",").map(_.toList) ~ closeBracket
 }
