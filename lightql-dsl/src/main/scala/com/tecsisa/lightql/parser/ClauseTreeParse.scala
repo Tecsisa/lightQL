@@ -18,11 +18,19 @@ private[parser] case object ClauseTreeParse extends Operators with BasicParsers 
 
   def element[_: P] =
     P(dateTime | localDate | yearMonth | double | integer | quoted(CharPred(_ != '"').rep))
-  def field[_: P] = P(charSeq.rep(sep = ("." | "->").?)).!
+  def field[_: P] = P(charSeq.rep(sep = ".".?)).!
   def value[_: P] = P(list(element) | element)
-  def clause[_: P] = P(field ~ clauseOperator ~ value).map {
+  def simpleClause[_: P] = P(field ~ clauseOperator ~ value).map {
     case (f, op, v) => Clause(f, op, v)
   }
+
+  def nestedClause[_: P]: P[Nested[Any]] =
+    P(
+      (field ~ nesting ~ openBracket ~ clauseTreeParser ~ closeBracket) | (field ~ nesting ~ simpleClause) | (field ~ nesting ~ nestedClause)
+    ).map {
+      case (f, c) => Nested(f, c)
+    }
+  def clause[_: P]               = P(simpleClause | nestedClause)
   def logicOperatorSection[_: P] = P(logicOperator)
 
   def clauseTreeParser()(implicit ctx: P[_]): P[ClauseTree] =
