@@ -41,7 +41,7 @@ private[parser] trait BasicParsers extends Helpers {
   protected[this] def yearMonth[_: P]      = P(year ~ "-" ~ dMHms).!.map(parseYearMonth)
 
   // A sequence of chars
-  protected[this] def charSeq[_: P] = P(CharIn("A-Z", "a-z", "0-9", "_\\-"))
+  protected[this] def charSeq[_: P] = P(CharIn("A-Z", "a-z", "0-9", "_"))
 
   // A parser for open parens
   protected[this] def openParen[_: P] = P("(" ~ space)
@@ -57,6 +57,9 @@ private[parser] trait BasicParsers extends Helpers {
 
   // A parser for open brackets
   protected[this] def openBracket[_: P] = P("[" ~ space)
+
+  // A parser for open brackets
+  protected[this] def nesting[_: P] = P("->")
 
   // A parser for close brackets
   protected[this] def closeBracket[_: P] = P(space ~ "]")
