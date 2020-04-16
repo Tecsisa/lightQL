@@ -3,7 +3,6 @@ language: scala
 sudo: required
 
 scala:
-  - "2.11.12"
   - "2.12.7"
 
 jdk:
