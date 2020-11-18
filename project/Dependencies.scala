@@ -1,11 +1,11 @@
 import sbt._
 
 object Version {
-  final val ScalaVersions       = Seq("2.12.7")
-  final val ScalaTest           = "3.0.5"
+  final val ScalaVersions       = Seq("2.13.3", "2.12.12")
+  final val ScalaTest           = "3.0.8"
   final val FastParse           = "2.2.4"
-  final val Elastic4s           = "6.7.2"
-  final val NscalaTime          = "2.20.0"
+  final val Elastic4s           = "6.7.4"
+  final val NscalaTime          = "2.26.0"
   final val Log4j               = "2.9.1"
   final val Dsl                 = "0.11.4-SNAPSHOT"
   final val ElasticMaterializer = "6.7.4-SNAPSHOT"
