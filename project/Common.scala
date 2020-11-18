@@ -37,17 +37,24 @@ object Common extends AutoPlugin {
       scalaVersion := crossScalaVersions.value.head,
       crossScalaVersions := Version.ScalaVersions,
       crossVersion := CrossVersion.binary,
-      scalacOptions ++= Seq(
-        "-encoding",
-        "UTF-8",
-        "-unchecked",
-        "-deprecation",
-        "-Xlint",
-        "-Yno-adapted-args",
-        "-Ywarn-dead-code",
-        "-Ywarn-unused-import", // only 2.11
-        "-Xfuture" // prevents of future breaking changes
-      ),
+      scalacOptions ++=
+        Seq("-encoding",
+          "UTF-8",
+          "-unchecked",
+          "-deprecation",
+          "-Xlint") ++
+        (CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((2, n)) if n >= 13 => Seq(
+            "-Xsource:3",
+            "-Wdead-code",
+            "-encoding"
+          )
+          case _ => Seq(
+            "-Yno-adapted-args",
+            "-Ywarn-dead-code",
+            "-Xfuture" // prevents of future breaking changes
+          )
+        }),
       scalacOptions in (Compile, console) ~= (_.filterNot(
         Set(
           "-Xfatal-warnings",
@@ -76,7 +83,7 @@ object Common extends AutoPlugin {
       // Additional resolvers
       resolvers ++= Seq(
         Resolver.sonatypeRepo("releases"),
-        "jgit-repo" at "http://download.eclipse.org/jgit/maven" // needed by tut
+        "jgit-repo" at "https://download.eclipse.org/jgit/maven" // needed by tut
       ),
       // Scalafmt settings
       scalafmtOnCompile in ThisBuild := true

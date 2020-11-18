@@ -7,9 +7,9 @@ package parser
 
 import com.tecsisa.lightql.ast.Query
 import fastparse._
-import LightQlWhiteSpace._
 
 object LightqlParser extends LightqlParser {
+  import LightQlWhiteSpace._
   private[this] def lightqlParser[_: P] = P(space ~ clauseTree ~ End) map Query
 
   def parse(s: String): Parsed[Query] =
