@@ -43,18 +43,17 @@ object Common extends AutoPlugin {
           "-unchecked",
           "-deprecation",
           "-Xlint") ++
-        (CrossVersion.partialVersion(scalaVersion.value) match {
-          case Some((2, n)) if n >= 13 => Seq(
-            "-Xsource:3",
-            "-Wdead-code",
-            "-encoding"
-          )
-          case _ => Seq(
-            "-Yno-adapted-args",
-            "-Ywarn-dead-code",
-            "-Xfuture" // prevents of future breaking changes
-          )
-        }),
+          (CrossVersion.partialVersion(scalaVersion.value) match {
+            case Some((2, n)) if n >= 13 => Seq(
+              "-Xsource:3",
+              "-Wdead-code"
+            )
+            case _ => Seq(
+              "-Yno-adapted-args",
+              "-Ywarn-dead-code",
+              "-Xfuture" // prevents of future breaking changes
+            )
+          }),
       scalacOptions in (Compile, console) ~= (_.filterNot(
         Set(
           "-Xfatal-warnings",
