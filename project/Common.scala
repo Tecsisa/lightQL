@@ -5,13 +5,14 @@ import de.heikoseeberger.sbtheader._
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 import com.typesafe.sbt.GitPlugin
 import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
+import xerial.sbt.Sonatype.SonatypeKeys._
 
 object Common extends AutoPlugin {
 
   final val headerLic =
     Some(
       HeaderLicense.Custom(
-        "Copyright (C) 2016 - 2018 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>")
+        "Copyright (C) 2016 - 2021 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>")
     )
 
   override def requires = JvmPlugin && GitPlugin && HeaderPlugin
@@ -35,8 +36,10 @@ object Common extends AutoPlugin {
       pomIncludeRepository := (_ => false),
       licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt"))),
       scalaVersion := crossScalaVersions.value.head,
+      version in ThisBuild := Version.Dsl,
       crossScalaVersions := Version.ScalaVersions,
       crossVersion := CrossVersion.binary,
+      publishTo := sonatypePublishToBundle.value,
       scalacOptions ++=
         Seq("-encoding",
           "UTF-8",
@@ -85,6 +88,6 @@ object Common extends AutoPlugin {
         "jgit-repo" at "https://download.eclipse.org/jgit/maven" // needed by tut
       ),
       // Scalafmt settings
-      scalafmtOnCompile in ThisBuild := true
+      scalafmtOnCompile in ThisBuild := false
     )
 }

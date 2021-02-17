@@ -1,23 +1,47 @@
 /*
- * Copyright (C) 2016 - 2018 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
+ * Copyright (C) 2016 - 2021 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
  */
 
 package com.tecsisa.lightql
 package mat
 package elastic
 
+import com.dimafeng.testcontainers.{ ElasticsearchContainer, ForAllTestContainer }
+import com.sksamuel.elastic4s.{ ElasticClient, ElasticProperties }
+import com.sksamuel.elastic4s.http.JavaClient
 import com.sksamuel.elastic4s.requests.analyzers.KeywordAnalyzer
 import com.sksamuel.elastic4s.testkit.{ DockerTests, ElasticMatchers, ElasticSugar }
 import com.tecsisa.lightql.ast.Query
 import com.tecsisa.lightql.parser.LightqlParser
-import org.scalatest._
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.wordspec.AnyWordSpec
+import org.testcontainers.utility.DockerImageName
+import scala.collection.JavaConverters._
 
 trait BaseSearchSpec
-    extends WordSpec
+    extends AnyWordSpec
     with ElasticSugar
     with ElasticMatchers
     with DockerTests
+    with ForAllTestContainer
     with BeforeAndAfterAll {
+
+  override val container = 
+    ElasticsearchContainer(
+      DockerImageName
+        .parse("docker.elastic.co/elasticsearch/elasticsearch")
+        .withTag(sys.env.getOrElse("ELASTIC_DOCKER_TAG", ElasticsearchContainer.defaultTag))
+    ).configure(_.withEnv(
+      Map(
+        "ES_JAVA_OPTS" -> "-Xmx1g -Xms1g", 
+        "discovery.type" -> "single-node"
+      ).asJava)
+    )
+
+  override val client: ElasticClient = {
+    container.start()
+    ElasticClient(JavaClient(ElasticProperties(s"http://${container.httpHostAddress}")))
+  }
 
   override protected def beforeAll(): Unit = {
     client.execute {
@@ -26,7 +50,7 @@ trait BaseSearchSpec
         textField("artist"),
         textField("composer") analyzer KeywordAnalyzer,
         textField("genre") analyzer KeywordAnalyzer,
-        objectField("date") fields (
+        objectField("date").fields(
           dateField("full"),
           dateField("localDate").format("strict_year_month_day"),
           dateField("yearMonth").format("strict_year_month"),
@@ -42,7 +66,7 @@ trait BaseSearchSpec
 
     client.execute {
       bulk(
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "Paranoid Android",
           "artist"   -> "Radiohead",
           "composer" -> "Radiohead",
@@ -56,7 +80,7 @@ trait BaseSearchSpec
           "price" -> 1.26,
           "stats" -> Map("rate" -> Map("stars" -> 4.5))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "Sinfonía núm. 1 en Do mayor, Op. 21. I Adagio molto - Allegro con brio",
           "artist"   -> "Simon Rattle // Berliner Philharmoniker",
           "composer" -> "Ludwig van Beethoven",
@@ -71,7 +95,7 @@ trait BaseSearchSpec
           "price" -> 2.45,
           "stats" -> Map("rate" -> Map("stars" -> 3.5))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "So What",
           "artist"   -> "Miles Davis",
           "composer" -> "Miles Davis",
@@ -86,7 +110,7 @@ trait BaseSearchSpec
           "stats" -> Map("rate" -> Map("stars" -> 5.0)),
           "tags"  -> List(Map("code" -> "INSTRUMENTAL"))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "La Isla Bonita",
           "artist"   -> "Madonna",
           "composer" -> "Patrick Leonard",
@@ -100,7 +124,7 @@ trait BaseSearchSpec
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 2.75))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "Symphony No.8 in E flat - \"Symphony of a Thousand\" Part One: Hymnus",
           "artist"   -> "Georg Solti // Chicago Symphony Orchestra",
           "composer" -> "Gustav Mahler",
@@ -114,7 +138,7 @@ trait BaseSearchSpec
           "price" -> 2.11,
           "stats" -> Map("rate" -> Map("stars" -> 3.25))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "Do You Realize??",
           "artist"   -> "Flaming Lips",
           "composer" -> "Wayne Coyne",
@@ -128,7 +152,7 @@ trait BaseSearchSpec
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 4.25))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "Don't Know Why",
           "artist"   -> "Norah Jones",
           "composer" -> "Jesse Harris",
@@ -142,7 +166,7 @@ trait BaseSearchSpec
           "price" -> 1.19,
           "stats" -> Map("rate" -> Map("stars" -> 1.5))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "Goldberg Variations: Aria",
           "artist"   -> "Glenn Gould",
           "composer" -> "Johann Sebastian Bach",
@@ -157,7 +181,7 @@ trait BaseSearchSpec
           "stats" -> Map("rate" -> Map("stars" -> 3.0)),
           "tags"  -> List(Map("code" -> "BAROQUE"), Map("code" -> "INSTRUMENTAL"))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "Money For Nothing",
           "artist"   -> "Dire Straits",
           "composer" -> "Mark Knopfler",
@@ -171,7 +195,7 @@ trait BaseSearchSpec
           "price" -> 1.29,
           "stats" -> Map("rate" -> Map("stars" -> 3.5))
         ),
-        indexInto("songs") fields (
+        indexInto("songs").fields(
           "name"     -> "Smell Like Teen Spirit",
           "artist"   -> "Nirvana",
           "composer" -> "Nirvana",
