@@ -36,7 +36,7 @@ object Common extends AutoPlugin {
       pomIncludeRepository := (_ => false),
       licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt"))),
       scalaVersion := crossScalaVersions.value.head,
-      version in ThisBuild := Version.Dsl,
+      version in ThisBuild := Version.ElasticMaterializer,
       crossScalaVersions := Version.ScalaVersions,
       crossVersion := CrossVersion.binary,
       publishTo := sonatypePublishToBundle.value,

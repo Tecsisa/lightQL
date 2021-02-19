@@ -9,9 +9,9 @@ object Version {
   final val Elastic4s_6           = "6.7.8"
   final val NscalaTime            = "2.26.0"
   final val Log4j                 = "2.14.0"
-  final val Dsl                   = "0.12.3-SNAPSHOT"
-  final val ElasticMaterializer   = "7.3.3-SNAPSHOT"
-  final val Elastic6Materializer  = "6.7.5-SNAPSHOT"
+  final val Dsl                   = "0.12.3"
+  final val ElasticMaterializer   = "7.3.3"
+  final val Elastic6Materializer  = "6.7.5"
 }
 
 object Library {
