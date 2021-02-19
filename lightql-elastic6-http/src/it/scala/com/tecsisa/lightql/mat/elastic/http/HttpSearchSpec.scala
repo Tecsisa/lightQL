@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2016 - 2018 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
+ * Copyright (C) 2016 - 2021 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>
  */
 
 package com.tecsisa.lightql
 package mat
 package elastic
 package http
-import com.sksamuel.elastic4s.ElasticClient
+import com.sksamuel.elastic4s.http.ElasticClient
 
 class HttpSearchSpec extends BaseSearchSpec {
 

@@ -26,6 +26,14 @@ target
 .ensime_lucene
 .ensime_cache
 
+# Metals, Bloop, etc
+.bloop
+.bsp
+.metals
+.vscode
+project/.bloop
+project/metals.sbt
+
 # Emacs
 *~
 \#*\#
