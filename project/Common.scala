@@ -3,7 +3,6 @@ import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import de.heikoseeberger.sbtheader._
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
-import com.typesafe.sbt.GitPlugin
 import org.scalafmt.sbt.ScalafmtPlugin.autoImport.scalafmtOnCompile
 import xerial.sbt.Sonatype.SonatypeKeys._
 
@@ -15,7 +14,7 @@ object Common extends AutoPlugin {
         "Copyright (C) 2016 - 2021 TECNOLOGIA, SISTEMAS Y APLICACIONES S.L. <http://www.tecsisa.com>")
     )
 
-  override def requires = JvmPlugin && GitPlugin && HeaderPlugin
+  override def requires = JvmPlugin && HeaderPlugin
 
   override def trigger = allRequirements
 
@@ -82,11 +81,6 @@ object Common extends AutoPlugin {
       scalacOptions in (Test, console) := (scalacOptions in (Compile, console)).value,
       unmanagedSourceDirectories.in(Compile) := Vector(scalaSource.in(Compile).value),
       unmanagedSourceDirectories.in(Test) := Vector(scalaSource.in(Test).value),
-      // Additional resolvers
-      resolvers ++= Seq(
-        Resolver.sonatypeRepo("releases"),
-        "jgit-repo" at "https://download.eclipse.org/jgit/maven" // needed by tut
-      ),
       // Scalafmt settings
       scalafmtOnCompile in ThisBuild := false
     )

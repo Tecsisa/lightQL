@@ -3,14 +3,7 @@ lazy val lightql = project
   .settings(
     skip in publish := true
   )
-  .aggregate(dsl, `elastic-http`, `elastic6-http`, docs)
-
-lazy val docs = project
-  .enablePlugins(PublishDocs)
-  .settings(
-    skip in publish := true
-  )
-  .dependsOn(`elastic-http`)
+  .aggregate(dsl, `elastic-http`, `elastic6-http`)
 
 lazy val dsl = project
   .in(file("lightql-dsl"))

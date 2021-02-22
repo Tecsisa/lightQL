@@ -3,14 +3,10 @@ import sbt._
 import sbtunidoc.ScalaUnidocPlugin
 
 object PublishDocs extends AutoPlugin {
-  import Microsite.micrositeDocumentationBaseUrl
-  import com.typesafe.sbt.site.util.SiteHelpers._
-  import microsites.MicrositesPlugin
-  import microsites.MicrositesPlugin.autoImport._
   import sbtunidoc.BaseUnidocPlugin.autoImport._
   import sbtunidoc.ScalaUnidocPlugin.autoImport._
 
-  override def requires = plugins.JvmPlugin && MicrositesPlugin && ScalaUnidocPlugin
+  override def requires = plugins.JvmPlugin && ScalaUnidocPlugin
 
   def publishOnly(artifactType: String)(config: PublishConfiguration): PublishConfiguration = {
     val newArts = config.artifacts.filter { case (art, _) => art.`type` == artifactType }
@@ -21,8 +17,6 @@ object PublishDocs extends AutoPlugin {
     doc in Compile := (doc in ScalaUnidoc).value,
     target in unidoc in ScalaUnidoc := crossTarget.value / "api",
     publishConfiguration ~= publishOnly(Artifact.DocType),
-    publishLocalConfiguration ~= publishOnly(Artifact.DocType),
-    micrositeGitterChannel := false,
-    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), micrositeDocumentationBaseUrl)
+    publishLocalConfiguration ~= publishOnly(Artifact.DocType)
   )
 }
